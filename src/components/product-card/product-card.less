@@ -1,0 +1,49 @@
+@name: product-card;
+
+.@{name} {
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  background: @white;
+  transition: @transition-base;
+
+  &:hover {
+    box-shadow: 0 0 0.5rem #ccc;
+  }
+
+  &-header {
+    padding: 0.5rem 0 0;
+    overflow: hidden;
+
+    &-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+
+    @width: 6.25vw;
+    img {
+      height: @width * 0.64;
+      width: @width;
+    }
+  }
+
+  &-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid #f8f8f8;
+
+    svg {
+      cursor: pointer;
+      padding: 0 0.25rem;
+      transition: @transition-base;
+
+      &:hover {
+        fill: @primary-color;
+      }
+    }
+  }
+}

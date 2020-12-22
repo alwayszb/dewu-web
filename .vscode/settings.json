@@ -1,0 +1,30 @@
+{
+  // Editor Configurations
+  //----------------------
+  //
+  // use two spaces as tab size
+  "editor.tabSize": 2,
+  // display ruler when edit files
+  "editor.rulers": [
+    100
+  ],
+  // auto format when save files
+  "editor.formatOnSave": true,
+  // use prettier to format `JS` files
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // use vetur to format `VUE` files
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur"
+  },
+  // use tab to trigger emmet
+  "emmet.triggerExpansionOnTab": true,
+  // use vscode-icons as icon theme
+  "workbench.iconTheme": "vscode-icons",
+  // vetur
+  "vetur.format.enable": true,
+  "vetur.validation.template": false,
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier"
+}

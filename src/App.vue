@@ -1,32 +1,49 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <Layout id="app">
+    <HHeader theme="dark" :style="{ height: '44px' }">
+      <Menu ref="menu" :datas="menuDatas" mode="horizontal" @select="onMenuSelect" />
+    </HHeader>
+    <Content :style="{ overflow: 'auto' }">
+      <keep-alive>
+        <router-view class="animate__animated animate__fadeIn" />
+      </keep-alive>
+    </Content>
+  </Layout>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+export default {
+  name: 'app',
+  data() {
+    this.menuDatas = [
+      { title: 'Home', key: 'home', icon: 'h-icon-home' },
+      {
+        title: 'Product',
+        key: 'search',
+        icon: 'h-icon-search',
+      },
+      { title: 'Collect', key: 'collect', icon: 'h-icon-star-on' },
+      { title: 'Task', key: 'task', icon: 'h-icon-task' },
+    ];
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+    return {
+      siderCollapsed: false,
+    };
+  },
+  mounted() {
+    this.triggerSelectMenu();
+  },
+  methods: {
+    triggerSelectMenu() {
+      if (this.$route.name) {
+        this.$refs.menu.select(this.$route.name);
+      }
+    },
+    onMenuSelect({ key: name }) {
+      if (this.$route.name !== name) {
+        this.$router.push({ name });
+      }
+    },
+  },
+};
+</script>

@@ -1,0 +1,31 @@
+@import '~heyui/themes/var.less';
+
+@black: #000;
+@white: #fff;
+
+// transition
+@transition-base: all 0.3s;
+
+// border
+@border-color-base: #eee;
+@border-color-light: fade(@black, 8%);
+@border-base: 1px solid @border-color-base;
+@border-round: 0.25rem;
+@border-round-top: 0.25rem 0.25rem 0 0;
+@border-round-bottom: 0 0 0.25rem 0.25rem;
+@border-round-left: 0.25rem 0 0 0.25rem;
+@border-round-right: 0 0.25rem 0.25rem 0;
+
+@scroll-bar-sm: {
+  &::-webkit-scrollbar {
+    height: 0.3125rem;
+    width: 0.3125rem;
+  }
+};
+
+@scroll-bar-xs: {
+  &::-webkit-scrollbar {
+    height: 0.25rem;
+    width: 0.25rem;
+  }
+};

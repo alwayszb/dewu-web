@@ -1,0 +1,46 @@
+// flex
+.flex-center {
+  .flex-center-x;
+  .flex-center-y;
+}
+.flex-center-y {
+  display: flex;
+  align-items: center;
+}
+.flex-center-x {
+  display: flex;
+  justify-content: center;
+}
+
+// ellipsis
+.ellipsis-single-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ellipsis-multi-line(@lines: 3) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @lines;
+  overflow: hidden;
+}
+
+.no-top-radius {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.no-bottom-radius {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-left-radius {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.no-right-radius {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
