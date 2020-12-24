@@ -93,7 +93,7 @@ export default {
   render() {
     return (
       <div class={name}>
-        <ve-line data={this.chartData} settings={this.chartSettings} height="500px" />
+        <ve-line data={this.chartData} settings={this.chartSettings} height="400px" />
       </div>
     );
   },

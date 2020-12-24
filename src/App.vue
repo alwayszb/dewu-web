@@ -17,13 +17,11 @@ export default {
   data() {
     this.menuDatas = [
       { title: 'Home', key: 'home', icon: 'h-icon-home' },
-      {
-        title: 'Product',
-        key: 'search',
-        icon: 'h-icon-search',
-      },
+      { title: 'Search', key: 'search', icon: 'h-icon-search' },
       { title: 'Collect', key: 'collect', icon: 'h-icon-star-on' },
       { title: 'Task', key: 'task', icon: 'h-icon-task' },
+      { title: 'Notice', key: 'notice', icon: 'h-icon-message' },
+      { title: 'Calendar', key: 'calendar', icon: 'h-icon-calendar' },
     ];
 
     return {

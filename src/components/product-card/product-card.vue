@@ -30,7 +30,18 @@ export default {
     },
   },
   render() {
-    const { name: title, image, articleNumber, sellPrice, sellDate, starred } = this.data;
+    const {
+      name: title,
+      image,
+      articleNumber,
+      sellPrice,
+      sellDate,
+      starred,
+      productSizes,
+    } = this.data;
+
+    const hasTrends = productSizes && productSizes.length > 0;
+
     return (
       <div class={name}>
         <div class={`${name}-header`}>
@@ -66,7 +77,9 @@ export default {
           {starred && (
             <v-icon name="star" v-tooltip content="cancel star" onClick={this.onCancelStarClick} />
           )}
-          <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
+          {hasTrends && (
+            <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
+          )}
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 <script>
-const name = 'task';
+const name = 'not-found';
 
 export default {
   name,
@@ -9,7 +9,7 @@ export default {
     return {};
   },
   render() {
-    return <div class={name}>Task</div>;
+    return <div class={name}>Not Found</div>;
   },
 };
 </script>

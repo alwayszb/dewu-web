@@ -1,25 +1,15 @@
-<style lang="less" scoped>
-//
-</style>
-
-<template>
-  <div :class="name">Welcome</div>
-</template>
-
 <script>
-const name = 'Home';
+const name = 'home';
 
 export default {
   name,
-  components: {},
-  created() {},
-  mounted() {},
   data() {
     this.name = name;
+
     return {};
   },
-  methods: {},
-  computed: {},
-  watch: {},
+  render() {
+    return <div class={name}>Home</div>;
+  },
 };
 </script>

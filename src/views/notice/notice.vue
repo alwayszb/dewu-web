@@ -1,5 +1,5 @@
 <script>
-const name = 'task';
+const name = 'notice';
 
 export default {
   name,
@@ -9,7 +9,7 @@ export default {
     return {};
   },
   render() {
-    return <div class={name}>Task</div>;
+    return <div class={name}>Notice</div>;
   },
 };
 </script>

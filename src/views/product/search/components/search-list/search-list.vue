@@ -21,6 +21,7 @@ export default {
     return {
       actionProduct: {},
       trendsModalVisible: false,
+      selectedSize: null,
     };
   },
   methods: {
@@ -28,6 +29,9 @@ export default {
     onCancelStar() {},
     onViewTrends(product) {
       this.actionProduct = product;
+      this.selectedSize = this.actionProduct.productSizes
+        ? this.actionProduct.productSizes[0].size
+        : null;
       this.trendsModalVisible = true;
     },
   },
@@ -45,11 +49,22 @@ export default {
           </Cell>
         ))}
 
-        <Modal v-model={this.trendsModalVisible}>
+        <Modal v-model={this.trendsModalVisible} hasDivider>
           <div slot="header" class="text-ellipsis" v-width={800}>
             {this.actionProduct.name}
           </div>
-          <Trends articleNumber={this.actionProduct.articleNumber} size="42.5" />
+          {this.actionProduct.productSizes && (
+            <SwitchList
+              v-model={this.selectedSize}
+              datas={this.actionProduct.productSizes.map(({ size }) => size)}
+              style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}
+              small
+            />
+          )}
+          <Trends articleNumber={this.actionProduct.articleNumber} size={this.selectedSize} />
+          <div slot="footer">
+            <Button onClick={() => (this.trendsModalVisible = false)}>Close</Button>
+          </div>
         </Modal>
       </Row>
     );

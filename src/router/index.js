@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Charts from '../views/Charts.vue';
-import Home from '../views/home';
-import Search from '../views/product/search';
-import Collect from '../views/collect';
-import Task from '../views/task';
+import Home from '@/views/home';
+import Search from '@/views/product/search';
+import Collect from '@/views/collect';
+import Task from '@/views/task';
+import Notice from '@/views/notice';
+import Calendar from '@/views/calendar';
+import { NotFound } from '@/views/error';
 
 Vue.use(VueRouter);
 
@@ -30,9 +32,25 @@ const routes = [
     component: Task,
   },
   {
-    path: '/charts',
-    name: 'charts',
-    component: Charts,
+    path: '/notice',
+    name: 'notice',
+    component: Notice,
+  },
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: NotFound,
+  },
+  {
+    path: '/calendar',
+    name: 'calendar',
+    component: Calendar,
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'not-found',
+    },
   },
 ];
 

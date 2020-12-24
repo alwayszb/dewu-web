@@ -55,7 +55,7 @@ export default {
         this.searchHistory.splice(10);
       }
 
-      localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
+      this.persistHistory();
     },
     onSearch(search) {
       this.setHistory(search);
@@ -77,10 +77,7 @@ export default {
         this.searchList = data;
       });
     },
-    onHistoryClose() {
-      localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
-    },
-    onHistoryClearAll() {
+    persistHistory() {
       localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
     },
   },
@@ -91,8 +88,8 @@ export default {
         <SearchHistory
           data={this.searchHistory}
           onSearch={this.onSearchClick}
-          onClose={this.onHistoryClose}
-          onClearAll={this.onHistoryClearAll}
+          onClose={this.persistHistory}
+          onClearAll={this.persistHistory}
         />
         <SearchList data={this.searchList} />
       </div>
