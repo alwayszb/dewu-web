@@ -3,7 +3,9 @@ services:
   dewu-web:
     container_name: dewu-web
     restart: on-failure:3
-    build: .
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
     ports:
       - '9000:9000'
     volumes:
