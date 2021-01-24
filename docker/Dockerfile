@@ -5,7 +5,7 @@ WORKDIR /cache
 
 COPY package*.json ./
 
-RUN npm install --production --silent --registry=https://r.npm.taobao.org
+RUN npm ci --silent --registry=https://r.npm.taobao.org
 
 RUN npm run build
 
