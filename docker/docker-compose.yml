@@ -1,6 +1,6 @@
 version: '3'
 services:
-  backoffice-web:
+  dewu-web:
     container_name: dewu-web
     restart: on-failure:3
     build: .
