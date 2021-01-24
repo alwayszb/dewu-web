@@ -1,17 +1,13 @@
 <script>
 import { commonMixin } from '@/mixins';
-import { productApi } from '@/api';
-import { SearchInput, SearchHistory, SearchList } from './components';
+import { productApi, purchaseRecordApi } from '@/api';
+import { SearchInput, SearchHistory, SearchList, TrendsModal } from './components';
 
 const name = 'search';
 
 export default {
   name,
   mixins: [commonMixin],
-  components: {
-    SearchInput,
-    SearchHistory,
-  },
   beforeRouteUpdate({ query }, from, next) {
     const { value } = query;
     if (value && value.trim()) {
@@ -35,6 +31,8 @@ export default {
       },
       searchHistory: [],
       searchList: [],
+      selectedProduct: {},
+      trendsModalVisible: false,
     };
   },
   created() {
@@ -66,7 +64,6 @@ export default {
       if (!search.value.trim()) {
         return;
       }
-
       this.$router.push({
         name: 'search',
         query: search,
@@ -80,6 +77,29 @@ export default {
     persistHistory() {
       localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
     },
+    onViewTrends(product) {
+      this.selectedProduct = product;
+      this.trendsModalVisible = true;
+    },
+    onSyncPurchaseRecords({ spuId }) {
+      purchaseRecordApi
+        .capturePurchaseRecords({
+          spuId,
+          captureAll: false,
+        })
+        .then(() => {
+          this.$Message({
+            type: 'success',
+            text: 'Sync job started',
+          });
+        })
+        .catch(() => {
+          this.$Message({
+            type: 'error',
+            text: 'Call sync job failed',
+          });
+        });
+    },
   },
   render() {
     return (
@@ -91,7 +111,16 @@ export default {
           onClose={this.persistHistory}
           onClearAll={this.persistHistory}
         />
-        <SearchList data={this.searchList} />
+        <SearchList
+          data={this.searchList}
+          onViewTrends={this.onViewTrends}
+          onSync={this.onSyncPurchaseRecords}
+        />
+        <TrendsModal
+          v-model={this.trendsModalVisible}
+          product={this.selectedProduct}
+          onSync={this.onSyncPurchaseRecords}
+        />
       </div>
     );
   },

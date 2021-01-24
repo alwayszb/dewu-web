@@ -10,6 +10,16 @@ export default {
         page,
         limit,
       },
+      contentLoading: false,
+    });
+  },
+  capturePurchaseRecords({ spuId, captureAll = false }) {
+    const url = '/products/capture-sold-list';
+    return request.get(url, {
+      params: {
+        spuId,
+        captureAll,
+      },
     });
   },
 };

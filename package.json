@@ -1,5 +1,5 @@
 {
-  "name": "dewu",
+  "name": "dewu-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
     "ant-design-vue": "^1.7.2",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
-    "echarts": "^3.1.0",
+    "echarts": "^4.9.0",
     "heyui": "^1.28.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",

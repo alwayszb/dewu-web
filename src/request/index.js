@@ -2,14 +2,17 @@ import axios from 'axios';
 import heyui from 'heyui';
 
 const request = axios.create({
-  baseURL: 'http://localhost:4000',
+  baseURL: process.env.VUE_APP_API_BASE,
 });
 
 let loadingCount = 0;
 request.interceptors.request.use(
   (config) => {
-    loadingCount += 1;
-    heyui.$Loading('Loading...');
+    const { contentLoading = true } = config;
+    if (contentLoading) {
+      loadingCount += 1;
+      heyui.$Loading('Loading...');
+    }
     return config;
   },
   (err) => {
@@ -19,9 +22,12 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(
   (res) => {
-    loadingCount -= 1;
-    if (loadingCount === 0) {
-      heyui.$Loading.close();
+    const { contentLoading = true } = res.config;
+    if (contentLoading) {
+      loadingCount -= 1;
+      if (loadingCount === 0) {
+        heyui.$Loading.close();
+      }
     }
     return res;
   },

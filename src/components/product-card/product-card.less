@@ -19,12 +19,21 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       overflow: hidden;
+      min-height: 3.5625rem;
     }
 
     @width: 6.25vw;
     img {
       height: @width * 0.64;
       width: @width;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: @border-radius;
+      transition: @transition-base;
+
+      &:hover {
+        border-color: @primary-color;
+      }
     }
   }
 

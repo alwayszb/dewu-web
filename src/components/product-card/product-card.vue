@@ -28,6 +28,12 @@ export default {
     onTrendsClick() {
       this.$emit('viewTrends', this.data);
     },
+    onImagePreview(url) {
+      this.$ImagePreview(url);
+    },
+    OnSyncClick() {
+      this.$emit('sync', this.data);
+    },
   },
   render() {
     const {
@@ -48,11 +54,22 @@ export default {
           <Row space={10}>
             <Cell width={12}>
               <div class="flex-center">
-                <img src={image} alt={title} />
+                <img
+                  class={`${name}-image`}
+                  src={image}
+                  alt={title}
+                  onClick={() => this.onImagePreview(image)}
+                />
               </div>
             </Cell>
             <Cell width={12}>
-              <span class={`${name}-header-title`}>{title}</span>
+              <a
+                class={`${name}-header-title`}
+                href={`https://m.poizon.com/router/product/ProductDetail?spuId=${this.data.spuId}`}
+                target="_blank"
+              >
+                {title}
+              </a>
             </Cell>
           </Row>
         </div>
@@ -80,6 +97,9 @@ export default {
           {hasTrends && (
             <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
           )}
+          <Poptip content="Be sure to sync?" onConfirm={this.OnSyncClick}>
+            <v-icon name="spider" />
+          </Poptip>
         </div>
       </div>
     );

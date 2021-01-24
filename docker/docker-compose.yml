@@ -1,0 +1,12 @@
+version: '3'
+services:
+  backoffice-web:
+    container_name: dewu-web
+    restart: on-failure:3
+    build: .
+    ports:
+      - '9000:9000'
+    volumes:
+      - '/var/log/nginx:/var/log/nginx'
+      - '/etc/timezone:/etc/timezone'
+      - '/etc/localtime:/etc/localtime'
