@@ -70,7 +70,7 @@ export default {
       });
     },
     invokeSearchApi(search) {
-      productApi.findProductsByQuery(search.value).then(({ data }) => {
+      productApi.findProductsByQuery({ query: search.value }).then(({ data }) => {
         this.searchList = data;
       });
     },
@@ -100,6 +100,22 @@ export default {
           });
         });
     },
+    onCaptureDetail({ spuId }) {
+      purchaseRecordApi
+        .captureDetail(spuId)
+        .then(() => {
+          this.$Message({
+            type: 'success',
+            text: 'Capture detail started',
+          });
+        })
+        .catch(() => {
+          this.$Message({
+            type: 'error',
+            text: 'Call capture detail failed',
+          });
+        });
+    },
   },
   render() {
     return (
@@ -115,6 +131,7 @@ export default {
           data={this.searchList}
           onViewTrends={this.onViewTrends}
           onSync={this.onSyncPurchaseRecords}
+          onCaptureDetail={this.onCaptureDetail}
         />
         <TrendsModal
           v-model={this.trendsModalVisible}

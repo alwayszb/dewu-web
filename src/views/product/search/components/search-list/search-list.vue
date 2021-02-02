@@ -10,6 +10,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    span: {
+      type: Number,
+      default: 4,
+    },
   },
   data() {
     this.name = name;
@@ -25,18 +29,22 @@ export default {
     onSyncPurchaseRecords(product) {
       this.$emit('sync', product);
     },
+    onCaptureDetail(product) {
+      this.$emit('captureDetail', product);
+    },
   },
   render() {
     return (
       <Row class={name} space={8}>
         {this.data.map((product) => (
-          <Cell width={4} key={product.id}>
+          <Cell width={this.span} key={product.id}>
             <ProductCard
               data={product}
               onStar={this.onStar}
               onCancelStar={this.onCancelStar}
               onViewTrends={this.onViewTrends}
               onSync={this.onSyncPurchaseRecords}
+              onCaptureDetail={this.onCaptureDetail}
             />
           </Cell>
         ))}

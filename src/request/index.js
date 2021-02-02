@@ -26,7 +26,9 @@ request.interceptors.response.use(
     if (contentLoading) {
       loadingCount -= 1;
       if (loadingCount === 0) {
-        heyui.$Loading.close();
+        setTimeout(() => {
+          heyui.$Loading.close();
+        }, 500);
       }
     }
     return res;

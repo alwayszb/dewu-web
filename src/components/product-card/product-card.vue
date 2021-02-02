@@ -34,6 +34,9 @@ export default {
     OnSyncClick() {
       this.$emit('sync', this.data);
     },
+    onCaptureDetailClick() {
+      this.$emit('captureDetail', this.data);
+    },
   },
   render() {
     const {
@@ -88,18 +91,35 @@ export default {
           </div>
         </div>
         <div class={`${name}-footer`}>
-          {!starred && (
-            <v-icon name="regular/star" v-tooltip content="star" onClick={this.onStarClick} />
+          {this.$slots.footer ? (
+            this.$slots.footer
+          ) : (
+            <div>
+              {!starred && (
+                <v-icon name="regular/star" v-tooltip content="star" onClick={this.onStarClick} />
+              )}
+              {starred && (
+                <v-icon
+                  name="star"
+                  v-tooltip
+                  content="cancel star"
+                  onClick={this.onCancelStarClick}
+                />
+              )}
+              <v-icon
+                name="camera"
+                v-tooltip
+                content="capture detail"
+                onClick={this.onCaptureDetailClick}
+              />
+              {hasTrends && (
+                <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
+              )}
+              <Poptip content="Be sure to sync?" onConfirm={this.OnSyncClick}>
+                <v-icon name="spider" />
+              </Poptip>
+            </div>
           )}
-          {starred && (
-            <v-icon name="star" v-tooltip content="cancel star" onClick={this.onCancelStarClick} />
-          )}
-          {hasTrends && (
-            <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
-          )}
-          <Poptip content="Be sure to sync?" onConfirm={this.OnSyncClick}>
-            <v-icon name="spider" />
-          </Poptip>
         </div>
       </div>
     );

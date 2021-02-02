@@ -17,6 +17,7 @@ export default {
   data() {
     this.menuDatas = [
       { title: 'Home', key: 'home', icon: 'h-icon-home' },
+      { title: 'Stock', key: 'stock', icon: 'h-icon-inbox' },
       { title: 'Search', key: 'search', icon: 'h-icon-search' },
       { title: 'Collect', key: 'collect', icon: 'h-icon-star-on' },
       { title: 'Task', key: 'task', icon: 'h-icon-task' },

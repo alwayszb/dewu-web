@@ -3,9 +3,11 @@ FROM node:14-alpine as node_cache
 
 WORKDIR /cache
 
-COPY package*.json ./
+COPY . ./
 
-RUN npm ci --silent --registry=https://r.npm.taobao.org
+RUN ls -l
+
+RUN npm install --registry=https://r.npm.taobao.org
 
 RUN npm run build
 

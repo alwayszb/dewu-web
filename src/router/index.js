@@ -7,6 +7,7 @@ import Task from '@/views/task';
 import Notice from '@/views/notice';
 import Calendar from '@/views/calendar';
 import { NotFound } from '@/views/error';
+import Stock from '@/views/stock';
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,11 @@ const routes = [
     path: '/calendar',
     name: 'calendar',
     component: Calendar,
+  },
+  {
+    path: '/stock',
+    name: 'stock',
+    component: Stock,
   },
   {
     path: '*',
