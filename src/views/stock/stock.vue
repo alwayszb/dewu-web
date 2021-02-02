@@ -4,9 +4,9 @@
 
 <script>
 import { ProductCard } from '@/components';
-import { productApi, stockApi } from '@/api';
+import { productApi, sellSnapshotApi, stockApi } from '@/api';
 import { time } from '@/utils';
-import { cloneDeep, get, round } from 'lodash';
+import { cloneDeep, get, isEmpty, round } from 'lodash';
 import StockForm from './components/stock-form';
 
 const name = 'stock';
@@ -16,7 +16,7 @@ export default {
 
   data() {
     this.name = name;
-    this.columns = [
+    this.backupColumns = [
       {
         dataIndex: 'product.image',
         title: 'Product',
@@ -91,18 +91,15 @@ export default {
         },
       },
       {
-        dataIndex: 'stockDate',
-        title: 'Stock Date',
-        customRender: (value) => {
-          return time.formatToDate(value);
-        },
-      },
-      {
         dataIndex: 'status',
         title: 'Status',
-        customRender: (value, { stockPrice, soldPrice, soldDate, profit }) => {
+        customRender: (value, { stockPrice, stockDate, soldPrice, soldDate, profit }) => {
           if (value === 'in_stock') {
-            return <a-tag color="blue">In Stock</a-tag>;
+            return (
+              <a-tooltip title={`Stock Date: ${time.formatToDate(stockDate)}`}>
+                <a-tag>In Stock</a-tag>
+              </a-tooltip>
+            );
           }
           if (value === 'sold') {
             return (
@@ -112,9 +109,14 @@ export default {
                 </a-tooltip>
                 <div style={{ marginTop: '0.25rem' }}>
                   {profit > 0 ? (
-                    <a-tag color="green">
-                      Profit: {profit} ({round((profit / stockPrice) * 100, 2)}%)
-                    </a-tag>
+                    <div>
+                      <a-tag color="green">
+                        <span>Profit: {profit}</span>
+                      </a-tag>
+                      <a-tag>
+                        <span>{round((profit / stockPrice) * 100, 2)}%</span>
+                      </a-tag>
+                    </div>
                   ) : (
                     <a-tag color="red">Loss: {profit}</a-tag>
                   )}
@@ -173,6 +175,7 @@ export default {
       filterOptions: {
         status: 'in_stock',
       },
+      columns: cloneDeep(this.backupColumns),
     };
   },
 
@@ -290,11 +293,58 @@ export default {
     },
 
     setSold() {
-      this.updateStock({ ...this.actionStock, status: 'sold' }, this.actionStockIndex).finally(
-        () => {
-          this.soldModalVisible = false;
-        },
-      );
+      this.updateStock(
+        { ...this.actionStock, status: 'sold', soldDate: new Date() },
+        this.actionStockIndex,
+      ).finally(() => {
+        this.soldModalVisible = false;
+      });
+    },
+
+    loadDuPrices() {
+      console.log('loadDuPrices');
+      if (!this.columns.find((item) => item.dataIndex === 'sellItem')) {
+        const index = this.columns.findIndex((item) => item.dataIndex === 'stockPrice') + 1;
+        this.columns.splice(index, 0, {
+          dataIndex: 'sellItem',
+          title: 'Du Price',
+          customRender: (value, { stockPrice }) => {
+            const { tradeDesc, price } = value;
+            const diffPrice = price / 100 - stockPrice;
+            const diffPercent = round((diffPrice / stockPrice) * 100, 2);
+            const valueDisplay = (
+              <div>
+                <div>
+                  <a-tag>
+                    {tradeDesc} | {price / 100}
+                  </a-tag>
+                </div>
+                <div style={{ marginTop: '0.25rem' }}>
+                  <a-tag>差价: {diffPrice}</a-tag>
+                  <a-tag color={diffPercent >= 20 ? 'green' : 'default'}>{diffPercent}%</a-tag>
+                </div>
+              </div>
+            );
+            return !isEmpty(value) ? valueDisplay : <a-spin />;
+          },
+        });
+      }
+      // init
+      this.stockList = this.stockList.map((stock) => ({
+        ...stock,
+        sellItem: {},
+      }));
+
+      this.stockList.forEach((stock) => {
+        const { spuId, productSize } = stock;
+        const { skuId } = productSize;
+        sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
+          const { sellItem } = data.find((item) => item.skuId === skuId);
+          setTimeout(() => {
+            stock.sellItem = sellItem;
+          }, 300);
+        });
+      });
     },
   },
 
@@ -329,12 +379,31 @@ export default {
           </Row>
         </div>
 
-        <div style={{ padding: '0 0.75rem 0.75rem' }}>
-          <a-radio-group v-model={this.filterOptions.status} onChange={this.loadStockList}>
+        <div style={{ display: 'flex', padding: '0 0.75rem 0.75rem', alignItems: 'center' }}>
+          <a-radio-group
+            v-model={this.filterOptions.status}
+            onChange={() => {
+              this.columns = cloneDeep(this.backupColumns);
+              this.loadStockList();
+            }}
+            style={{ flex: 1 }}
+          >
             <a-radio-button value="">All</a-radio-button>
             <a-radio-button value="in_stock">In Stock</a-radio-button>
             <a-radio-button value="sold">Sold</a-radio-button>
           </a-radio-group>
+
+          {this.filterOptions.status === 'in_stock' && (
+            <a-button
+              type="primary"
+              size="small"
+              icon="sync"
+              style={{ marginLeft: '0.5rem' }}
+              onClick={this.loadDuPrices}
+            >
+              Real-time Price
+            </a-button>
+          )}
         </div>
 
         <a-table
