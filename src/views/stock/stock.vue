@@ -146,14 +146,14 @@ export default {
               {record.status === 'in_stock' && (
                 <a-popconfirm
                   title="Confirm to duplicate?"
-                  onConfirm={() => this.onDuplicateClick(record)}
+                  onConfirm={() => this.onDuplicateClick(record, index)}
                 >
                   <a-button size="small" icon="copy" />
                 </a-popconfirm>
               )}
               <a-popconfirm
                 title="Confirm to delete?"
-                onConfirm={() => this.onDeleteClick(record.id)}
+                onConfirm={() => this.onDeleteClick(record.id, index)}
               >
                 <a-button type="danger" size="small" icon="delete" />
               </a-popconfirm>
@@ -184,10 +184,14 @@ export default {
   },
 
   methods: {
+    toBackUpStockList() {
+      this.backupStockList = cloneDeep(this.stockList);
+    },
+
     loadStockList() {
       stockApi.findAllStocks(this.filterOptions).then(({ data }) => {
         this.stockList = data.map((item) => ({ ...item, editing: false }));
-        this.backupStockList = cloneDeep(this.stockList);
+        this.toBackUpStockList();
       });
     },
 
@@ -224,18 +228,22 @@ export default {
         }
       });
       this.stockModalVisible = false;
-      Promise.all(promiseList).then(() => {
+      Promise.all(promiseList).then((result) => {
         this.$message.success('add stocks success');
-        this.loadStockList();
+        const newAdded = result
+          .map(({ data }) => ({ ...data, editing: false }))
+          .sort(({ productSizeA }, { productSizeB }) => productSizeA - productSizeB);
+        this.stockList = [...newAdded, ...this.stockList];
+        this.toBackUpStockList();
       });
     },
 
-    onDeleteClick(id) {
+    onDeleteClick(id, index) {
       stockApi
         .deleteStock(id)
         .then(() => {
           this.$message.success('Delete stock success');
-          this.loadStockList();
+          this.stockList.splice(index, 1);
         })
         .catch(() => {
           this.$message.success('Delete stock failed');
@@ -265,7 +273,7 @@ export default {
           record.editing = false;
           record.profit = record.soldPrice - record.stockPrice;
           Object.assign(this.stockList[index], record);
-          this.backupStockList = cloneDeep(this.stockList);
+          this.toBackUpStockList();
         })
         .catch(() => {
           Object.assign(record, originStock);
@@ -273,7 +281,7 @@ export default {
         });
     },
 
-    onDuplicateClick(record) {
+    onDuplicateClick(record, index) {
       const { sizeId, soldDate, soldPrice, spuId, stockDate, stockPrice } = record;
       const stock = {
         sizeId,
@@ -285,9 +293,9 @@ export default {
       };
       stockApi
         .createStock(stock)
-        .then(() => {
+        .then(({ data }) => {
           this.$message.success('Duplicate stock success');
-          this.loadStockList();
+          this.stockList.splice(index, 0, { ...record, id: data.id });
         })
         .catch(() => {
           this.$message.success('Duplicate stock failed');
@@ -376,10 +384,14 @@ export default {
           const { spuId, productSize } = stock;
           const { skuId } = productSize;
           sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
-            const { sellItem } = data.find((item) => item.skuId === skuId);
-            setTimeout(() => {
-              stock.sellItem = sellItem;
-            }, 300);
+            const foundSellSnapshot = data.find((item) => item.skuId === skuId);
+            if (foundSellSnapshot) {
+              setTimeout(() => {
+                stock.sellItem = foundSellSnapshot.sellItem;
+              }, 300);
+            } else {
+              stock.sellItem = null;
+            }
           });
         }
       });
