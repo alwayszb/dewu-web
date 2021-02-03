@@ -1,22 +1,14 @@
-# cache stage
-FROM node:14-alpine as node_cache
-
-WORKDIR /cache
-
+# build stage
+FROM node:lts-alpine as build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
 COPY . ./
-
-RUN ls -l
-
-RUN npm install --registry=https://r.npm.taobao.org
-
 RUN npm run build
 
-# build stage
-FROM nginx:1.12-alpine
-
+# production-stage
+FROM nginx:1.16.1-alpine as production-stage
 WORKDIR /etc/nginx
-
-COPY conf/** ./conf.d/
-COPY --from=node_cache /cache/dist ./html/
-
-EXPOSE 9000
+RUN rm ./conf.d/default.conf
+COPY ./docker/conf ./conf.d/
+COPY --from=build-stage /app/dist ./html/

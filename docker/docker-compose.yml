@@ -8,7 +8,7 @@ services:
       dockerfile: ./docker/Dockerfile
     ports:
       - '9000:9000'
-    # volumes:
-    # - '/var/log/nginx:/var/log/nginx'
-    # - '/etc/timezone:/etc/timezone'
-    # - '/etc/localtime:/etc/localtime'
+    volumes:
+      - '/var/log/nginx:/var/log/nginx'
+      - '/etc/timezone:/etc/timezone'
+      - '/etc/localtime:/etc/localtime'
