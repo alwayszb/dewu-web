@@ -11,4 +11,8 @@ export default {
       },
     });
   },
+  findNewAddedProducts() {
+    const url = '/products/new-added';
+    return request.get(url);
+  },
 };
