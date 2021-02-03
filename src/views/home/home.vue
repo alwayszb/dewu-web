@@ -1,6 +1,7 @@
 <script>
 import { ProductCard } from '@/components';
 import { productApi } from '@/api';
+import { time } from '@/utils';
 
 const name = 'home';
 
@@ -29,7 +30,7 @@ export default {
             {this.productList.map((product) => (
               <Cell width={6} key={product.id}>
                 <ProductCard data={product}>
-                  <div slot="footer"></div>
+                  <div slot="footer">{time.formatToTime(product.createdAt)}</div>
                 </ProductCard>
               </Cell>
             ))}
