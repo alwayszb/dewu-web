@@ -132,7 +132,7 @@ export default {
         customRender: (value, record, index) => {
           return (
             <div>
-              {record.status === 'in_stock' && (
+              {record.status === 'in_stock' && !!record.stockPrice && (
                 <a-tooltip title="set sold">
                   <a-button
                     type="primary"
@@ -253,11 +253,19 @@ export default {
         record.editing = false;
         return;
       }
+
+      if (!record.stockPrice) {
+        record.stockPrice = 0;
+      }
+
       return stockApi
         .updateStock(record.id, record)
         .then(() => {
           this.$message.success('Update stock success');
-          this.loadStockList();
+          record.editing = false;
+          record.profit = record.soldPrice - record.stockPrice;
+          Object.assign(this.stockList[index], record);
+          this.backupStockList = cloneDeep(this.stockList);
         })
         .catch(() => {
           Object.assign(record, originStock);
@@ -302,48 +310,78 @@ export default {
     },
 
     loadDuPrices() {
-      console.log('loadDuPrices');
       if (!this.columns.find((item) => item.dataIndex === 'sellItem')) {
         const index = this.columns.findIndex((item) => item.dataIndex === 'stockPrice') + 1;
-        this.columns.splice(index, 0, {
-          dataIndex: 'sellItem',
-          title: 'Du Price',
-          customRender: (value, { stockPrice }) => {
-            const { tradeDesc, price } = value;
-            const diffPrice = price / 100 - stockPrice;
-            const diffPercent = round((diffPrice / stockPrice) * 100, 2);
-            const valueDisplay = (
-              <div>
+        this.columns.splice(
+          index,
+          0,
+          {
+            dataIndex: 'sellItem',
+            title: 'Du Price',
+            customRender: (value, { stockPrice, serviceFeeRate }) => {
+              if (!stockPrice || !value) {
+                return '-';
+              }
+              const { tradeDesc, price } = value;
+              const actualPrice = price / 100;
+              const techServiceFee = round(actualPrice * serviceFeeRate, 2);
+              const transferFee = round(actualPrice * 0.01, 2);
+              const serviceFee = round(techServiceFee + transferFee + 33, 2);
+              const salesRevenue = round(actualPrice - serviceFee, 2);
+              const diffPrice = round(salesRevenue - stockPrice, 2);
+              const diffPercent = round((diffPrice / stockPrice) * 100, 2);
+              const valueDisplay = (
                 <div>
-                  <a-tag>
-                    {tradeDesc} | {price / 100}
-                  </a-tag>
+                  <div>
+                    <a-tag>
+                      {tradeDesc} | {actualPrice}
+                    </a-tag>
+                    <a-tooltip
+                      title={`${actualPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
+                    >
+                      <a-tag>到手: {salesRevenue}</a-tag>
+                    </a-tooltip>
+                  </div>
+                  <div style={{ marginTop: '0.25rem' }}>
+                    <a-tag>
+                      <span>利润: {diffPrice}</span>
+                    </a-tag>
+                    <a-tag color={diffPercent >= 20 ? 'green' : ''}>{diffPercent}%</a-tag>
+                  </div>
                 </div>
-                <div style={{ marginTop: '0.25rem' }}>
-                  <a-tag>差价: {diffPrice}</a-tag>
-                  <a-tag color={diffPercent >= 20 ? 'green' : 'default'}>{diffPercent}%</a-tag>
-                </div>
-              </div>
-            );
-            return !isEmpty(value) ? valueDisplay : <a-spin />;
+              );
+              return !isEmpty(value) ? valueDisplay : <a-spin />;
+            },
           },
-        });
+          {
+            dataIndex: 'serviceFeeRate',
+            title: 'SFR',
+            customRender: (value, record) => {
+              return (
+                <a-input-number v-model={record.serviceFeeRate} style={{ width: '4.375rem' }} />
+              );
+            },
+          },
+        );
       }
       // init
       this.stockList = this.stockList.map((stock) => ({
         ...stock,
         sellItem: {},
+        serviceFeeRate: 0.05,
       }));
 
       this.stockList.forEach((stock) => {
-        const { spuId, productSize } = stock;
-        const { skuId } = productSize;
-        sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
-          const { sellItem } = data.find((item) => item.skuId === skuId);
-          setTimeout(() => {
-            stock.sellItem = sellItem;
-          }, 300);
-        });
+        if (stock.stockPrice) {
+          const { spuId, productSize } = stock;
+          const { skuId } = productSize;
+          sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
+            const { sellItem } = data.find((item) => item.skuId === skuId);
+            setTimeout(() => {
+              stock.sellItem = sellItem;
+            }, 300);
+          });
+        }
       });
     },
   },
@@ -393,7 +431,7 @@ export default {
             <a-radio-button value="sold">Sold</a-radio-button>
           </a-radio-group>
 
-          {this.filterOptions.status === 'in_stock' && (
+          {this.filterOptions.status === 'in_stock' && this.stockList.length > 0 && (
             <a-button
               type="primary"
               size="small"
