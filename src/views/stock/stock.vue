@@ -201,6 +201,7 @@ export default {
       },
       columns: cloneDeep(this.backupColumns),
       synced: false,
+      sortType: 'profit',
     };
   },
 
@@ -351,6 +352,7 @@ export default {
           {
             dataIndex: 'sellItem',
             title: 'Du Price',
+            width: 230,
             customRender: (value, record) => {
               const { sellItem, stockPrice } = record;
 
@@ -381,7 +383,7 @@ export default {
                     </a-tooltip>
                   </div>
                   <div style={{ marginTop: '0.25rem' }}>
-                    <a-tag>
+                    <a-tag color={profit >= 200 ? 'green' : ''}>
                       <span>利润: {profit}</span>
                     </a-tag>
                     <a-tag color={profitPercent >= 20 ? 'green' : ''}>{profitPercent}%</a-tag>
@@ -416,11 +418,12 @@ export default {
         serviceFeeRate: 0.05,
       }));
 
-      this.stockList.forEach((stock) => {
+      const promiseList = this.stockList.map((stock) => {
         if (stock.stockPrice) {
           const { spuId, productSize } = stock;
           const { skuId } = productSize;
-          sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
+
+          return sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
             const foundSellSnapshot = data.find((item) => item.skuId === skuId);
             if (foundSellSnapshot) {
               setTimeout(() => {
@@ -433,13 +436,20 @@ export default {
         }
       });
 
-      this.synced = true;
+      Promise.all(promiseList).then(() => {
+        this.$message.success('All stock price synced');
+        setTimeout(() => {
+          this.onSortByProfit();
+          this.synced = true;
+        }, 1000);
+      });
     },
 
     onSortByProfit() {
       this.stockList = this.stockList.sort(
         ({ sellItem: { profit: profitA } }, { sellItem: { profit: profitB } }) => profitB - profitA,
       );
+      this.toBackUpStockList();
     },
 
     onSortByPercent() {
@@ -449,6 +459,7 @@ export default {
           { sellItem: { profitPercent: profitPercentB } },
         ) => profitPercentB - profitPercentA,
       );
+      this.toBackUpStockList();
     },
   },
 
@@ -511,17 +522,18 @@ export default {
             <a-radio-button value="sold">Sold</a-radio-button>
           </a-radio-group>
 
+          {/** Sort and sync */}
           {this.filterOptions.status === 'in_stock' && this.stockList.length > 0 && (
             <div>
               {this.synced && (
                 <a-radio-group
+                  v-model={this.sortType}
                   size="small"
                   button-style="solid"
-                  onChange={(e) => {
-                    const type = e.target.value;
-                    if (type === 'profit') {
+                  onChange={() => {
+                    if (this.sortType === 'profit') {
                       this.onSortByProfit();
-                    } else if (type === 'percent') {
+                    } else if (this.sortType === 'percent') {
                       this.onSortByPercent();
                     }
                   }}
