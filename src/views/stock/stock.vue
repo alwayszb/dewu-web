@@ -34,6 +34,18 @@ const normalizeSellItem = ({ stockPrice, serviceFeeRate }, sellItem) => {
 export default {
   name,
 
+  created() {
+    this.loadStockList();
+  },
+
+  computed: {
+    synced() {
+      return (
+        this.stockList.length > 0 && this.stockList.every(({ sellItem }) => !isEmpty(sellItem))
+      );
+    },
+  },
+
   data() {
     this.name = name;
     this.backupColumns = [
@@ -200,13 +212,17 @@ export default {
         status: 'in_stock',
       },
       columns: cloneDeep(this.backupColumns),
-      synced: false,
       sortType: 'profit',
     };
   },
 
-  created() {
-    this.loadStockList();
+  watch: {
+    synced(val) {
+      if (val) {
+        this.$message.success('All stock price synced');
+        this.onSortByProfit();
+      }
+    },
   },
 
   methods: {
@@ -431,19 +447,22 @@ export default {
         serviceFeeRate: 0.05,
       }));
 
-      const promiseList = this.stockList
+      const promiseList = [];
+      this.stockList
         .filter(({ stockPrice }) => stockPrice)
-        .map((stock) => {
-          return this.getSellSnapshot(stock);
+        .forEach((stock, index) => {
+          setTimeout(() => {
+            promiseList.push(this.getSellSnapshot(stock));
+          }, index * 1000);
         });
 
-      Promise.all(promiseList).then(() => {
-        this.$message.success('All stock price synced');
-        setTimeout(() => {
-          this.onSortByProfit();
-          this.synced = true;
-        }, 1000);
-      });
+      // Promise.all(promiseList).then(() => {
+      //   this.$message.success('All stock price synced');
+      //   setTimeout(() => {
+      //     this.onSortByProfit();
+      //     this.synced = true;
+      //   }, 1000);
+      // });
     },
 
     getSellSnapshot(stock) {
