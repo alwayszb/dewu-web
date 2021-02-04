@@ -31,10 +31,12 @@ export default {
       {
         dataIndex: 'productSize.size',
         title: 'Size',
+        width: 60,
       },
       {
         dataIndex: 'product.articleNumber',
         title: 'Article Number',
+        width: 130,
         customRender: (value) => {
           return (
             <div>
@@ -93,6 +95,7 @@ export default {
       {
         dataIndex: 'status',
         title: 'Status',
+        width: 90,
         customRender: (value, { stockPrice, stockDate, soldPrice, soldDate, profit }) => {
           if (value === 'in_stock') {
             return (
@@ -129,6 +132,7 @@ export default {
       },
       {
         title: 'Actions',
+        width: 110,
         customRender: (value, record, index) => {
           return (
             <div>
