@@ -360,6 +360,12 @@ export default {
                 return '-';
               }
 
+              if (sellItem === 'failed') {
+                return (
+                  <a-button type="link" icon="sync" onClick={() => this.getSellSnapshot(record)} />
+                );
+              }
+
               const {
                 tradeDesc,
                 actualPrice,
@@ -418,23 +424,11 @@ export default {
         serviceFeeRate: 0.05,
       }));
 
-      const promiseList = this.stockList.map((stock) => {
-        if (stock.stockPrice) {
-          const { spuId, productSize } = stock;
-          const { skuId } = productSize;
-
-          return sellSnapshotApi.getSellSnapshotBySpuId(spuId).then(({ data }) => {
-            const foundSellSnapshot = data.find((item) => item.skuId === skuId);
-            if (foundSellSnapshot) {
-              setTimeout(() => {
-                stock.sellItem = normalizeSellItem(stock, foundSellSnapshot.sellItem);
-              }, 300);
-            } else {
-              stock.sellItem = null;
-            }
-          });
-        }
-      });
+      const promiseList = this.stockList
+        .filter(({ stockPrice }) => stockPrice)
+        .map((stock) => {
+          return this.getSellSnapshot(stock);
+        });
 
       Promise.all(promiseList).then(() => {
         this.$message.success('All stock price synced');
@@ -443,6 +437,26 @@ export default {
           this.synced = true;
         }, 1000);
       });
+    },
+
+    getSellSnapshot(stock) {
+      const { spuId, productSize } = stock;
+      const { skuId } = productSize;
+      return sellSnapshotApi
+        .getSellSnapshotBySpuId(spuId)
+        .then(({ data }) => {
+          const foundSellSnapshot = data.find((item) => item.skuId === skuId);
+          if (foundSellSnapshot) {
+            setTimeout(() => {
+              stock.sellItem = normalizeSellItem(stock, foundSellSnapshot.sellItem);
+            }, 300);
+          } else {
+            stock.sellItem = null;
+          }
+        })
+        .catch(() => {
+          stock.sellItem = 'failed';
+        });
     },
 
     onSortByProfit() {
