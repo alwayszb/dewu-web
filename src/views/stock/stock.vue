@@ -11,6 +11,26 @@ import StockForm from './components/stock-form';
 
 const name = 'stock';
 
+const normalizeSellItem = ({ stockPrice, serviceFeeRate }, sellItem) => {
+  const { price } = sellItem;
+  const actualPrice = price / 100;
+  const techServiceFee = round(actualPrice * serviceFeeRate, 2);
+  const transferFee = round(actualPrice * 0.01, 2);
+  const serviceFee = round(techServiceFee + transferFee + 33, 2);
+  const salesRevenue = round(actualPrice - serviceFee, 2);
+  const profit = round(salesRevenue - stockPrice, 2);
+  const profitPercent = round((profit / stockPrice) * 100, 2);
+  return {
+    ...sellItem,
+    actualPrice,
+    techServiceFee,
+    transferFee,
+    salesRevenue,
+    profit,
+    profitPercent,
+  };
+};
+
 export default {
   name,
 
@@ -180,6 +200,7 @@ export default {
         status: 'in_stock',
       },
       columns: cloneDeep(this.backupColumns),
+      synced: false,
     };
   },
 
@@ -330,18 +351,23 @@ export default {
           {
             dataIndex: 'sellItem',
             title: 'Du Price',
-            customRender: (value, { stockPrice, serviceFeeRate }) => {
-              if (!stockPrice || !value) {
+            customRender: (value, record) => {
+              const { sellItem, stockPrice } = record;
+
+              if (!stockPrice || !sellItem) {
                 return '-';
               }
-              const { tradeDesc, price } = value;
-              const actualPrice = price / 100;
-              const techServiceFee = round(actualPrice * serviceFeeRate, 2);
-              const transferFee = round(actualPrice * 0.01, 2);
-              const serviceFee = round(techServiceFee + transferFee + 33, 2);
-              const salesRevenue = round(actualPrice - serviceFee, 2);
-              const diffPrice = round(salesRevenue - stockPrice, 2);
-              const diffPercent = round((diffPrice / stockPrice) * 100, 2);
+
+              const {
+                tradeDesc,
+                actualPrice,
+                techServiceFee,
+                transferFee,
+                salesRevenue,
+                profit,
+                profitPercent,
+              } = sellItem;
+
               const valueDisplay = (
                 <div>
                   <div>
@@ -356,13 +382,13 @@ export default {
                   </div>
                   <div style={{ marginTop: '0.25rem' }}>
                     <a-tag>
-                      <span>利润: {diffPrice}</span>
+                      <span>利润: {profit}</span>
                     </a-tag>
-                    <a-tag color={diffPercent >= 20 ? 'green' : ''}>{diffPercent}%</a-tag>
+                    <a-tag color={profitPercent >= 20 ? 'green' : ''}>{profitPercent}%</a-tag>
                   </div>
                 </div>
               );
-              return !isEmpty(value) ? valueDisplay : <a-spin />;
+              return !isEmpty(sellItem) ? valueDisplay : <a-spin />;
             },
           },
           {
@@ -370,12 +396,19 @@ export default {
             title: 'SFR',
             customRender: (value, record) => {
               return (
-                <a-input-number v-model={record.serviceFeeRate} style={{ width: '4.375rem' }} />
+                <a-input-number
+                  v-model={record.serviceFeeRate}
+                  style={{ width: '4.375rem' }}
+                  onChange={() => {
+                    record.sellItem = normalizeSellItem(record, record.sellItem);
+                  }}
+                />
               );
             },
           },
         );
       }
+
       // init
       this.stockList = this.stockList.map((stock) => ({
         ...stock,
@@ -391,7 +424,7 @@ export default {
             const foundSellSnapshot = data.find((item) => item.skuId === skuId);
             if (foundSellSnapshot) {
               setTimeout(() => {
-                stock.sellItem = foundSellSnapshot.sellItem;
+                stock.sellItem = normalizeSellItem(stock, foundSellSnapshot.sellItem);
               }, 300);
             } else {
               stock.sellItem = null;
@@ -399,6 +432,23 @@ export default {
           });
         }
       });
+
+      this.synced = true;
+    },
+
+    onSortByProfit() {
+      this.stockList = this.stockList.sort(
+        ({ sellItem: { profit: profitA } }, { sellItem: { profit: profitB } }) => profitB - profitA,
+      );
+    },
+
+    onSortByRate() {
+      this.stockList = this.stockList.sort(
+        (
+          { sellItem: { profitPercent: profitPercentA } },
+          { sellItem: { profitPercent: profitPercentB } },
+        ) => profitPercentB - profitPercentA,
+      );
     },
   },
 
@@ -406,33 +456,47 @@ export default {
     return (
       <div class={name}>
         <div class={`${name}-header`}>
-          <div style={{ marginTop: '0.75rem', width: '20rem' }}>
+          {/** add stock: search */}
+          <div style={{ display: 'flex', alignItems: 'center', margin: '0.75rem 0' }}>
             <a-input-search
-              onSearch={this.onSearchProduct}
               placeholder="Search product to add stock"
+              style={{ width: '20rem' }}
+              onSearch={this.onSearchProduct}
             />
+            {this.productList.length !== 0 && (
+              <a-button
+                type="link"
+                icon="disconnect"
+                onClick={() => {
+                  this.productList = [];
+                }}
+              />
+            )}
           </div>
+          {/** add stock: card */}
+          {this.productList.length > 0 && (
+            <div style={{ paddingBottom: '0.75rem' }}>
+              <Row space={8}>
+                {this.productList.map((product) => (
+                  <Cell width={6} key={product.id}>
+                    <ProductCard data={product}>
+                      <a-button
+                        type="primary"
+                        size="small"
+                        slot="footer"
+                        onClick={() => this.onAddStock(product)}
+                      >
+                        Add Stock
+                      </a-button>
+                    </ProductCard>
+                  </Cell>
+                ))}
+              </Row>
+            </div>
+          )}
         </div>
 
-        <div style={{ padding: '0 0.75rem 0.5rem' }}>
-          <Row space={8}>
-            {this.productList.map((product) => (
-              <Cell width={6} key={product.id}>
-                <ProductCard data={product}>
-                  <a-button
-                    type="primary"
-                    size="small"
-                    slot="footer"
-                    onClick={() => this.onAddStock(product)}
-                  >
-                    Add Stock
-                  </a-button>
-                </ProductCard>
-              </Cell>
-            ))}
-          </Row>
-        </div>
-
+        {/** stock filter area */}
         <div style={{ display: 'flex', padding: '0 0.75rem 0.75rem', alignItems: 'center' }}>
           <a-radio-group
             v-model={this.filterOptions.status}
@@ -448,15 +512,27 @@ export default {
           </a-radio-group>
 
           {this.filterOptions.status === 'in_stock' && this.stockList.length > 0 && (
-            <a-button
-              type="primary"
-              size="small"
-              icon="sync"
-              style={{ marginLeft: '0.5rem' }}
-              onClick={this.loadDuPrices}
-            >
-              Real-time Price
-            </a-button>
+            <div>
+              {this.synced && (
+                <a-button-group>
+                  <a-button size="small" icon="sort-ascending" onClick={this.onSortByProfit}>
+                    Sort By Profit
+                  </a-button>
+                  <a-button size="small" icon="sort-ascending" onClick={this.onSortByRate}>
+                    Sort By Rate
+                  </a-button>
+                </a-button-group>
+              )}
+              <a-button
+                type="primary"
+                size="small"
+                icon="sync"
+                style={{ marginLeft: '0.5rem' }}
+                onClick={this.loadDuPrices}
+              >
+                Sync Price
+              </a-button>
+            </div>
           )}
         </div>
 
