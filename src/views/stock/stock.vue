@@ -442,7 +442,7 @@ export default {
       );
     },
 
-    onSortByRate() {
+    onSortByPercent() {
       this.stockList = this.stockList.sort(
         (
           { sellItem: { profitPercent: profitPercentA } },
@@ -514,14 +514,27 @@ export default {
           {this.filterOptions.status === 'in_stock' && this.stockList.length > 0 && (
             <div>
               {this.synced && (
-                <a-button-group>
-                  <a-button size="small" icon="sort-ascending" onClick={this.onSortByProfit}>
-                    Sort By Profit
-                  </a-button>
-                  <a-button size="small" icon="sort-ascending" onClick={this.onSortByRate}>
-                    Sort By Rate
-                  </a-button>
-                </a-button-group>
+                <a-radio-group
+                  size="small"
+                  button-style="solid"
+                  onChange={(e) => {
+                    const type = e.target.value;
+                    if (type === 'profit') {
+                      this.onSortByProfit();
+                    } else if (type === 'percent') {
+                      this.onSortByPercent();
+                    }
+                  }}
+                >
+                  <a-radio-button value="profit">
+                    <a-icon type="sort-ascending" />
+                    <span>Profit</span>
+                  </a-radio-button>
+                  <a-radio-button value="percent">
+                    <a-icon type="sort-ascending" />
+                    <span>Percent</span>
+                  </a-radio-button>
+                </a-radio-group>
               )}
               <a-button
                 type="primary"
