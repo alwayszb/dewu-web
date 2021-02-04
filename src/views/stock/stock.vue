@@ -362,7 +362,14 @@ export default {
 
               if (sellItem === 'failed') {
                 return (
-                  <a-button type="link" icon="sync" onClick={() => this.getSellSnapshot(record)} />
+                  <a-button
+                    type="link"
+                    icon="sync"
+                    onClick={() => {
+                      record.sellItem = {};
+                      this.getSellSnapshot(record);
+                    }}
+                  />
                 );
               }
 
