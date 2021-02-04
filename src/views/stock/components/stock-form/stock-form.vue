@@ -25,6 +25,7 @@ export default {
     loadSizeList() {
       productSizeApi.findSizesBySpuId(this.product.spuId).then(({ data }) => {
         this.sizeList = data;
+        this.stocks = {};
         this.sizeList.forEach(({ id }) => {
           this.$set(this.stocks, id, 0);
         });
