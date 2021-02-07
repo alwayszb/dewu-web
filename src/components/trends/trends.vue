@@ -8,8 +8,8 @@ const name = 'trends';
 export default {
   name,
   props: {
-    articleNumber: {
-      type: String,
+    spuId: {
+      type: Number,
       default: null,
     },
     size: {
@@ -48,7 +48,7 @@ export default {
     };
   },
   watch: {
-    articleNumber: {
+    spuId: {
       immediate: true,
       handler() {
         this.loadPurchaseHistory();
@@ -60,14 +60,14 @@ export default {
   },
   methods: {
     loadPurchaseHistory() {
-      if (!this.size || !this.articleNumber) {
+      if (!this.size || !this.spuId) {
         return;
       }
       this.loading = true;
       this.dataEmpty = true;
       this.chartData.rows = [];
       purchaseRecordApi
-        .findPurchaseRecordsByProduct({ articleNumber: this.articleNumber, size: this.size })
+        .findPurchaseRecordsByProduct({ spuId: this.spuId, size: this.size })
         .then(({ data }) => {
           if (data.length === 0) {
             this.$Message({

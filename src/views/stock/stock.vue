@@ -46,11 +46,11 @@ export default {
       );
     },
     renderedStockList() {
-      const { search } = this.filterOptions;
-      if (!search || !search.trim()) {
-        return this.stockList;
-      }
-      return this.stockList.filter(({ product }) => product.name.includes(search));
+      const { search, category: filterCategory } = this.filterOptions;
+      return this.stockList.filter(
+        ({ product, category }) =>
+          product.name.includes(search) && (!filterCategory || category === filterCategory),
+      );
     },
   },
 
@@ -60,8 +60,9 @@ export default {
       {
         dataIndex: 'product.image',
         title: 'Product',
+        width: 100,
         customRender: (value, record) => {
-          return <img src={value} alt={record.product.title} height={40} />;
+          return <img src={value} alt={record.product.title} width={80} />;
         },
       },
       {
@@ -205,7 +206,7 @@ export default {
       filterOptions: {
         search: '',
         status: 'in_stock',
-        productType: '',
+        category: null,
       },
       columns: cloneDeep(this.backupColumns),
       sortType: 'profit',
@@ -412,10 +413,12 @@ export default {
                   </a-tooltip>
                 </div>
                 <div style={{ marginTop: '0.25rem' }}>
-                  <a-tag color={profit >= 200 ? 'green' : ''}>
+                  <a-tag color={this.getProfitTagColor(profit)}>
                     <span>利润: {profit}</span>
                   </a-tag>
-                  <a-tag color={profitPercent >= 20 ? 'green' : ''}>{profitPercent}%</a-tag>
+                  <a-tag color={this.getProfitPercentTagColor(profitPercent)}>
+                    {profitPercent}%
+                  </a-tag>
                 </div>
               </div>
             );
@@ -492,6 +495,33 @@ export default {
       );
       this.toBackUpStockList();
     },
+
+    getProfitTagColor(profit) {
+      if (profit < 0) {
+        return 'green';
+      }
+      if (profit >= 0 && profit < 200) {
+        return '';
+      }
+      return 'red';
+    },
+
+    getProfitPercentTagColor(percent) {
+      if (percent < 0) {
+        return 'green';
+      }
+      if (percent >= 0 && percent < 20) {
+        return '';
+      }
+      return 'red';
+    },
+
+    getRowClassName({ sellItem }) {
+      if (sellItem.profit >= 200 || sellItem.profitPercent >= 20) {
+        return 'saleable';
+      }
+      return null;
+    },
   },
 
   render() {
@@ -565,17 +595,14 @@ export default {
 
             {/** product type filter */}
             <a-radio-group
-              v-model={this.filterOptions.productType}
+              v-model={this.filterOptions.category}
               size="small"
               button-style="solid"
               style={{ marginLeft: '0.5rem' }}
-              onChange={(e) => {
-                this.filterOptions.search = e.target.value;
-              }}
             >
-              <a-radio-button value="">All</a-radio-button>
-              <a-radio-button value="Air Jordan 1">AJ1</a-radio-button>
-              <a-radio-button value="Air Force 1">AF1</a-radio-button>
+              <a-radio-button value={null}>All</a-radio-button>
+              <a-radio-button value="AJ1">AJ1</a-radio-button>
+              <a-radio-button value="AF1">AF1</a-radio-button>
               <a-radio-button value="Dunk">Dunk</a-radio-button>
             </a-radio-group>
           </div>
@@ -625,6 +652,8 @@ export default {
           rowKey="id"
           size="small"
           pagination={false}
+          style={{ background: '#fff' }}
+          rowClassName={this.getRowClassName}
         />
 
         {/** stock modal */}

@@ -1,3 +1,5 @@
+@import '~ant-design-vue/lib/style/themes/default.less';
+
 @name: stock;
 
 .@{name} {
@@ -22,4 +24,10 @@
 
 .ant-form-item {
   margin-bottom: 0;
+}
+
+/deep/ .saleable {
+  td {
+    background: @red-1;
+  }
 }

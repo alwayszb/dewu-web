@@ -1,11 +1,11 @@
 import request from '@/request';
 
 export default {
-  findPurchaseRecordsByProduct({ articleNumber, size }, { page = 0, limit = 100000 } = {}) {
+  findPurchaseRecordsByProduct({ spuId, size }, { page = 0, limit = 100000 } = {}) {
     const url = '/purchase-records';
     return request.get(url, {
       params: {
-        articleNumber,
+        spuId,
         size,
         page,
         limit,
