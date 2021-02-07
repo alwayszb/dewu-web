@@ -41,7 +41,8 @@ export default {
   computed: {
     synced() {
       return (
-        this.stockList.length > 0 && this.stockList.every(({ sellItem }) => !isEmpty(sellItem))
+        this.renderedStockList.length > 0 &&
+        this.renderedStockList.every(({ sellItem }) => !isEmpty(sellItem))
       );
     },
     renderedStockList() {
