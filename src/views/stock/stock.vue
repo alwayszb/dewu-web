@@ -460,10 +460,10 @@ export default {
     },
 
     getSellSnapshot(stock) {
-      const { spuId, productSize } = stock;
+      const { product, productSize } = stock;
       const { skuId } = productSize;
       return sellSnapshotApi
-        .getSellSnapshotBySpuId(spuId)
+        .getSellSnapshotBySpuId(product.spuId)
         .then(({ data }) => {
           const foundSellSnapshot = data.find((item) => item.skuId === skuId);
           if (foundSellSnapshot) {
