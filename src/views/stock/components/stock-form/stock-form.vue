@@ -23,7 +23,7 @@ export default {
 
   methods: {
     loadSizeList() {
-      productSizeApi.findSizesBySpuId(this.product.spuId).then(({ data }) => {
+      productSizeApi.findSizesByArticleNumber(this.product.articleNumber).then(({ data }) => {
         this.sizeList = data;
         this.stocks = {};
         this.sizeList.forEach(({ id }) => {
@@ -57,7 +57,7 @@ export default {
   },
 
   watch: {
-    'product.spuId': {
+    'product.articleNumber': {
       immediate: true,
       handler() {
         this.loadSizeList();

@@ -1,11 +1,11 @@
 import request from '@/request';
 
 export default {
-  findSizesBySpuId(spuId) {
+  findSizesByArticleNumber(articleNumber) {
     const url = '/product-sizes';
     return request.get(url, {
       params: {
-        spuId,
+        articleNumber,
       },
     });
   },

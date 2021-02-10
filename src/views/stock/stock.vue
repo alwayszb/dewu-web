@@ -262,10 +262,10 @@ export default {
       Object.keys(stocks).map((sizeId) => {
         const count = stocks[sizeId];
         for (let i = 0; i < count; i++) {
-          const { spuId } = this.actionProduct;
+          const { articleNumber } = this.actionProduct;
           const stock = {
             sizeId,
-            spuId,
+            articleNumber,
             stockDate: new Date(),
             stockPrice: 0,
           };
@@ -327,12 +327,12 @@ export default {
     },
 
     onDuplicateClick(record, index) {
-      const { sizeId, soldDate, soldPrice, spuId, stockDate, stockPrice } = record;
+      const { articleNumber, sizeId, soldDate, soldPrice, stockDate, stockPrice } = record;
       const stock = {
+        articleNumber,
         sizeId,
         soldDate,
         soldPrice,
-        spuId,
         stockDate,
         stockPrice,
       };
@@ -517,7 +517,7 @@ export default {
     },
 
     getRowClassName({ sellItem }) {
-      if (sellItem.profit >= 200 || sellItem.profitPercent >= 20) {
+      if (sellItem && (sellItem.profit >= 200 || sellItem.profitPercent >= 20)) {
         return 'saleable';
       }
       return null;

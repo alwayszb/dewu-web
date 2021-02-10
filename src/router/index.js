@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/home';
 import Search from '@/views/product/search';
-import Collect from '@/views/collect';
+import Favorite from '@/views/favorite';
 import Task from '@/views/task';
 import Notice from '@/views/notice';
 import Calendar from '@/views/calendar';
@@ -23,9 +23,9 @@ const routes = [
     component: Search,
   },
   {
-    path: '/collect',
-    name: 'collect',
-    component: Collect,
+    path: '/favorite',
+    name: 'favorite',
+    component: Favorite,
   },
   {
     path: '/task',

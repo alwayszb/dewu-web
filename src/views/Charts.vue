@@ -125,6 +125,7 @@ export default {
     },
 
     loadPurchaseHistory(articleNumber) {
+      console.log('loadPurchaseHistory:', articleNumber);
       request
         .get(
           `/purchase-records/?page=0&limit=100000&articleNumber=${articleNumber}&size=${this.size}`,

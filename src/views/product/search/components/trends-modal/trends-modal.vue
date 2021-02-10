@@ -101,7 +101,7 @@ export default {
             ))}
           </a-radio-group>
         )}
-        <Trends spuId={this.product.spuId} size={this.size} />
+        <Trends articleNumber={this.product.articleNumber} size={this.size} />
         <div slot="footer">
           <Button onClick={this.onClose}>Close</Button>
         </div>

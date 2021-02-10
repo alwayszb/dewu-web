@@ -34,6 +34,17 @@ request.interceptors.response.use(
     return res;
   },
   (err) => {
+    loadingCount -= 1;
+    if (loadingCount === 0) {
+      setTimeout(() => {
+        heyui.$Loading.close();
+      }, 500);
+    }
+    heyui.$Notice({
+      type: 'error',
+      title: '请求失败',
+      content: err.message,
+    });
     Promise.reject(err);
   },
 );

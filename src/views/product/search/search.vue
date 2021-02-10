@@ -1,6 +1,6 @@
 <script>
 import { commonMixin } from '@/mixins';
-import { productApi, purchaseRecordApi } from '@/api';
+import { captureApi, productApi } from '@/api';
 import { SearchInput, SearchHistory, SearchList, TrendsModal } from './components';
 
 const name = 'search';
@@ -81,10 +81,10 @@ export default {
       this.selectedProduct = product;
       this.trendsModalVisible = true;
     },
-    onSyncPurchaseRecords({ spuId }) {
-      purchaseRecordApi
+    onSyncPurchaseRecords({ articleNumber }) {
+      captureApi
         .capturePurchaseRecords({
-          spuId,
+          articleNumber,
           captureAll: false,
         })
         .then(() => {
@@ -100,9 +100,9 @@ export default {
           });
         });
     },
-    onCaptureDetail({ spuId }) {
-      purchaseRecordApi
-        .captureDetail(spuId)
+    onCaptureDetail({ articleNumber }) {
+      captureApi
+        .captureDetail(articleNumber)
         .then(() => {
           this.$Message({
             type: 'success',
