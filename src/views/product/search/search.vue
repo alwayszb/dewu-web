@@ -116,6 +116,16 @@ export default {
           });
         });
     },
+    onStar(product) {
+      productApi.addProductFavorite(product.id).then(() => {
+        product.favorite = true;
+      });
+    },
+    onCancelStar(product) {
+      productApi.removeProductFavorite(product.id).then(() => {
+        product.favorite = false;
+      });
+    },
   },
   render() {
     return (
@@ -129,6 +139,8 @@ export default {
         />
         <SearchList
           data={this.searchList}
+          onStar={this.onStar}
+          onCancelStar={this.onCancelStar}
           onViewTrends={this.onViewTrends}
           onSync={this.onSyncPurchaseRecords}
           onCaptureDetail={this.onCaptureDetail}

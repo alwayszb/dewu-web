@@ -45,7 +45,7 @@ export default {
       articleNumber,
       sellPrice,
       sellDate,
-      starred,
+      favorite,
       productSizes,
     } = this.data;
 
@@ -95,10 +95,10 @@ export default {
             this.$slots.footer
           ) : (
             <div>
-              {!starred && (
+              {!favorite && (
                 <v-icon name="regular/star" v-tooltip content="star" onClick={this.onStarClick} />
               )}
-              {starred && (
+              {favorite && (
                 <v-icon
                   name="star"
                   v-tooltip

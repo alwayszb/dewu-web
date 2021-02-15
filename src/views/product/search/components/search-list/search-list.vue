@@ -21,8 +21,12 @@ export default {
     return {};
   },
   methods: {
-    onStar() {},
-    onCancelStar() {},
+    onStar(product) {
+      this.$emit('star', product);
+    },
+    onCancelStar(product) {
+      this.$emit('cancelStar', product);
+    },
     onViewTrends(product) {
       this.$emit('viewTrends', product);
     },

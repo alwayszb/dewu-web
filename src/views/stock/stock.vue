@@ -4,16 +4,15 @@
 
 <script>
 import { ProductCard } from '@/components';
-import { productApi, sellSnapshotApi, stockApi } from '@/api';
+import { productApi, stockApi } from '@/api';
 import { time } from '@/utils';
-import { cloneDeep, get, isEmpty, round } from 'lodash';
+import { cloneDeep, get, round } from 'lodash';
 import StockForm from './components/stock-form';
 
 const name = 'stock';
 
-const normalizeSellItem = ({ stockPrice, serviceFeeRate }, sellItem) => {
-  const { price } = sellItem;
-  const actualPrice = price / 100;
+const getPriceInfo = ({ stockPrice, serviceFeeRate, realTimePrice }) => {
+  const actualPrice = realTimePrice / 100;
   const techServiceFee = round(actualPrice * serviceFeeRate, 2);
   const transferFee = round(actualPrice * 0.01, 2);
   const serviceFee = round(techServiceFee + transferFee + 33, 2);
@@ -21,7 +20,6 @@ const normalizeSellItem = ({ stockPrice, serviceFeeRate }, sellItem) => {
   const profit = round(salesRevenue - stockPrice, 2);
   const profitPercent = round((profit / stockPrice) * 100, 2);
   return {
-    ...sellItem,
     actualPrice,
     techServiceFee,
     transferFee,
@@ -39,12 +37,6 @@ export default {
   },
 
   computed: {
-    synced() {
-      return (
-        this.renderedStockList.length > 0 &&
-        this.renderedStockList.every(({ sellItem }) => !isEmpty(sellItem))
-      );
-    },
     renderedStockList() {
       const { search, category: filterCategory } = this.filterOptions;
       return this.stockList.filter(
@@ -99,7 +91,7 @@ export default {
         },
       },
       {
-        dataIndex: 'stockPrice',
+        dataIndex: 'priceInfo.stockPrice',
         title: 'Stock Price',
         width: 120,
         customRender: (value, record, index) => {
@@ -109,7 +101,7 @@ export default {
           return record.editing ? (
             <a-input-number
               ref={`stockPrice-${index}`}
-              v-model={record.stockPrice}
+              v-model={record.priceInfo.stockPrice}
               style={{ width: '6rem' }}
               onBlur={() => {
                 this.updateStock(record, index);
@@ -131,6 +123,54 @@ export default {
               {value}
             </span>
           );
+        },
+      },
+      {
+        dataIndex: 'priceInfo',
+        title: 'Du Price',
+        width: 230,
+        customRender: (value) => {
+          const {
+            actualPrice,
+            techServiceFee,
+            transferFee,
+            salesRevenue,
+            profit,
+            profitPercent,
+            tradeDesc,
+            snapshotDate,
+          } = value;
+
+          const valueDisplay = (
+            <div>
+              <div>
+                <a-tooltip title={time.formatToTime(snapshotDate)}>
+                  <a-tag>
+                    {tradeDesc} | {actualPrice}
+                  </a-tag>
+                </a-tooltip>
+                <a-tooltip
+                  title={`${actualPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
+                >
+                  <a-tag>到手: {salesRevenue}</a-tag>
+                </a-tooltip>
+              </div>
+              <div style={{ marginTop: '0.25rem' }}>
+                <a-tag color={this.getProfitTagColor(profit)}>
+                  <span>利润: {profit}</span>
+                </a-tag>
+                <a-tag color={this.getProfitPercentTagColor(profitPercent)}>{profitPercent}%</a-tag>
+              </div>
+            </div>
+          );
+          return valueDisplay;
+        },
+      },
+      {
+        dataIndex: 'serviceFeeRate',
+        title: 'SFR',
+        customRender: (value, record) => {
+          return <a-input-number v-model={record.serviceFeeRate} style={{ width: '4.375rem' }} />;
         },
       },
       {
@@ -213,15 +253,7 @@ export default {
     };
   },
 
-  watch: {
-    synced(val) {
-      if (val) {
-        this.$message.success('All stock price synced');
-        this.sortType = 'profit';
-        this.onSortByProfit();
-      }
-    },
-  },
+  watch: {},
 
   methods: {
     toBackUpStockList() {
@@ -230,13 +262,26 @@ export default {
 
     loadStockList() {
       stockApi.findAllStocks(this.filterOptions).then(({ data }) => {
-        this.stockList = data.map((item) => ({
-          ...item,
+        this.stockList = data.map(({ stockPrice, sellSnapshot, ...res }) => ({
+          ...res,
           editing: false,
-          sellItem: {},
           serviceFeeRate: 0.05,
+          priceInfo: {
+            ...getPriceInfo({
+              stockPrice,
+              serviceFeeRate: 0.05,
+              realTimePrice: sellSnapshot.price,
+            }),
+            stockPrice,
+            tradeDesc: sellSnapshot.tradeDesc,
+            snapshotDate: sellSnapshot.createdAt,
+          },
         }));
-        this.toBackUpStockList();
+        if (this.sortType === 'profit') {
+          this.onSortByProfit();
+        } else if (this.sortType === 'percent') {
+          this.onSortByPercent();
+        }
       });
     },
 
@@ -362,126 +407,10 @@ export default {
       });
     },
 
-    addDuPriceColumn(index) {
-      this.columns.splice(
-        index,
-        0,
-        {
-          dataIndex: 'sellItem',
-          title: 'Du Price',
-          width: 230,
-          customRender: (value, record) => {
-            const { sellItem, stockPrice } = record;
-
-            if (!stockPrice || !sellItem) {
-              return '-';
-            }
-
-            if (sellItem === 'failed') {
-              return (
-                <a-button
-                  type="link"
-                  icon="sync"
-                  onClick={() => {
-                    record.sellItem = {};
-                    this.getSellSnapshot(record);
-                  }}
-                />
-              );
-            }
-
-            const {
-              tradeDesc,
-              actualPrice,
-              techServiceFee,
-              transferFee,
-              salesRevenue,
-              profit,
-              profitPercent,
-            } = sellItem;
-
-            const valueDisplay = (
-              <div>
-                <div>
-                  <a-tag>
-                    {tradeDesc} | {actualPrice}
-                  </a-tag>
-                  <a-tooltip
-                    title={`${actualPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
-                  >
-                    <a-tag>到手: {salesRevenue}</a-tag>
-                  </a-tooltip>
-                </div>
-                <div style={{ marginTop: '0.25rem' }}>
-                  <a-tag color={this.getProfitTagColor(profit)}>
-                    <span>利润: {profit}</span>
-                  </a-tag>
-                  <a-tag color={this.getProfitPercentTagColor(profitPercent)}>
-                    {profitPercent}%
-                  </a-tag>
-                </div>
-              </div>
-            );
-            return !isEmpty(sellItem) ? valueDisplay : <a-spin />;
-          },
-        },
-        {
-          dataIndex: 'serviceFeeRate',
-          title: 'SFR',
-          customRender: (value, record) => {
-            return (
-              <a-input-number
-                v-model={record.serviceFeeRate}
-                style={{ width: '4.375rem' }}
-                onChange={() => {
-                  record.sellItem = normalizeSellItem(record, record.sellItem);
-                }}
-              />
-            );
-          },
-        },
-      );
-    },
-
-    loadDuPrices() {
-      if (!this.columns.find((item) => item.dataIndex === 'sellItem')) {
-        const index = this.columns.findIndex((item) => item.dataIndex === 'stockPrice') + 1;
-        this.addDuPriceColumn(index);
-      }
-
-      const promiseList = [];
-      this.renderedStockList
-        .filter(({ stockPrice }) => stockPrice)
-        .forEach((stock, index) => {
-          setTimeout(() => {
-            promiseList.push(this.getSellSnapshot(stock));
-          }, index * 1000);
-        });
-    },
-
-    getSellSnapshot(stock) {
-      const { product, productSize } = stock;
-      const { skuId } = productSize;
-      return sellSnapshotApi
-        .getSellSnapshotBySpuId(product.spuId)
-        .then(({ data }) => {
-          const foundSellSnapshot = data.find((item) => item.skuId === skuId);
-          if (foundSellSnapshot) {
-            setTimeout(() => {
-              stock.sellItem = normalizeSellItem(stock, foundSellSnapshot.sellItem);
-            }, 300);
-          } else {
-            stock.sellItem = null;
-          }
-        })
-        .catch(() => {
-          stock.sellItem = 'failed';
-        });
-    },
-
     onSortByProfit() {
       this.stockList = this.stockList.sort(
-        ({ sellItem: { profit: profitA } }, { sellItem: { profit: profitB } }) => profitB - profitA,
+        ({ priceInfo: { profit: profitA } }, { priceInfo: { profit: profitB } }) =>
+          profitB - profitA,
       );
       this.toBackUpStockList();
     },
@@ -489,8 +418,8 @@ export default {
     onSortByPercent() {
       this.stockList = this.stockList.sort(
         (
-          { sellItem: { profitPercent: profitPercentA } },
-          { sellItem: { profitPercent: profitPercentB } },
+          { priceInfo: { profitPercent: profitPercentA } },
+          { priceInfo: { profitPercent: profitPercentB } },
         ) => profitPercentB - profitPercentA,
       );
       this.toBackUpStockList();
@@ -516,8 +445,8 @@ export default {
       return 'red';
     },
 
-    getRowClassName({ sellItem }) {
-      if (sellItem && (sellItem.profit >= 200 || sellItem.profitPercent >= 20)) {
+    getRowClassName({ priceInfo }) {
+      if (priceInfo.profit >= 200 || priceInfo.profitPercent >= 20) {
         return 'saleable';
       }
       return null;
@@ -610,38 +539,27 @@ export default {
           {/** Sort and sync */}
           {this.filterOptions.status === 'in_stock' && this.stockList.length > 0 && (
             <div>
-              {this.synced && (
-                <a-radio-group
-                  v-model={this.sortType}
-                  size="small"
-                  button-style="solid"
-                  onChange={() => {
-                    if (this.sortType === 'profit') {
-                      this.onSortByProfit();
-                    } else if (this.sortType === 'percent') {
-                      this.onSortByPercent();
-                    }
-                  }}
-                >
-                  <a-radio-button value="profit">
-                    <a-icon type="sort-ascending" />
-                    <span>Profit</span>
-                  </a-radio-button>
-                  <a-radio-button value="percent">
-                    <a-icon type="sort-ascending" />
-                    <span>Percent</span>
-                  </a-radio-button>
-                </a-radio-group>
-              )}
-              <a-button
-                type="primary"
+              <a-radio-group
+                v-model={this.sortType}
                 size="small"
-                icon="sync"
-                style={{ marginLeft: '0.5rem' }}
-                onClick={this.loadDuPrices}
+                button-style="solid"
+                onChange={() => {
+                  if (this.sortType === 'profit') {
+                    this.onSortByProfit();
+                  } else if (this.sortType === 'percent') {
+                    this.onSortByPercent();
+                  }
+                }}
               >
-                Sync Price
-              </a-button>
+                <a-radio-button value="profit">
+                  <a-icon type="sort-ascending" />
+                  <span>Profit</span>
+                </a-radio-button>
+                <a-radio-button value="percent">
+                  <a-icon type="sort-ascending" />
+                  <span>Percent</span>
+                </a-radio-button>
+              </a-radio-group>
             </div>
           )}
         </div>

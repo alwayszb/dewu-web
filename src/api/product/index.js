@@ -11,8 +11,20 @@ export default {
       },
     });
   },
+  findFavoriteProducts() {
+    const url = '/products/favorite';
+    return request.get(url);
+  },
   findNewAddedProducts() {
     const url = '/products/new-added';
     return request.get(url);
+  },
+  addProductFavorite(id) {
+    const url = `/products/${id}/favorite`;
+    return request.patch(url);
+  },
+  removeProductFavorite(id) {
+    const url = `/products/${id}/favorite`;
+    return request.delete(url);
   },
 };

@@ -1,6 +1,6 @@
 <script>
 import { time } from '@/utils';
-import { favoriteApi } from '@/api';
+import { productApi } from '@/api';
 
 const name = 'task';
 
@@ -12,21 +12,21 @@ export default {
     this.name = name;
     this.columns = [
       {
-        dataIndex: 'product.image',
+        dataIndex: 'image',
         title: 'Product',
         width: 100,
         customRender: (value, record) => {
-          return <img src={value} alt={record.product.title} width={80} />;
+          return <img src={value} alt={record.title} width={80} />;
         },
       },
       {
-        dataIndex: 'product.name',
+        dataIndex: 'name',
         title: 'Name',
       },
       {
-        dataIndex: 'product.articleNumber',
+        dataIndex: 'articleNumber',
         title: 'Article Number',
-        width: 130,
+        width: 140,
         customRender: (value) => {
           return (
             <div>
@@ -56,8 +56,15 @@ export default {
       {
         title: 'Actions',
         width: 200,
-        customRender: () => {
-          return <a-button type="danger" size="small" icon="delete" />;
+        customRender: (value, record, index) => {
+          return (
+            <a-button
+              type="danger"
+              size="small"
+              icon="delete"
+              onClick={() => this.onDelete(record, index)}
+            />
+          );
         },
       },
     ];
@@ -67,9 +74,17 @@ export default {
     };
   },
   created() {
-    favoriteApi.findAllFavorites().then(({ data }) => {
+    productApi.findFavoriteProducts().then(({ data }) => {
       this.dataSource = data;
     });
+  },
+  methods: {
+    onDelete({ id }, index) {
+      productApi.removeProductFavorite(id).then(() => {
+        this.$message.success('Delete success');
+        this.dataSource.splice(index, 1);
+      });
+    },
   },
   render() {
     return (

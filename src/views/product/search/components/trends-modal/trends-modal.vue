@@ -49,7 +49,7 @@ export default {
     },
     getRealTimePrice(skuId) {
       const sellSnapshot = this.sellSnapshotList.find((item) => skuId === item.skuId);
-      return sellSnapshot ? sellSnapshot.sellItem.price / 100 : null;
+      return sellSnapshot && sellSnapshot.sellItem ? sellSnapshot.sellItem.price / 100 : null;
     },
     async loadRealTimePriceData() {
       this.sellSnapshotList = await sellSnapshotApi
