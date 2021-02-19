@@ -1,5 +1,4 @@
 <script>
-import { ProductCard } from '@/components';
 import { productApi } from '@/api';
 import { time } from '@/utils';
 
@@ -29,9 +28,9 @@ export default {
           <Row space={8}>
             {this.productList.map((product) => (
               <Cell width={6} key={product.id}>
-                <ProductCard data={product}>
+                <product-card data={product}>
                   <div slot="footer">{time.formatToTime(product.createdAt)}</div>
-                </ProductCard>
+                </product-card>
               </Cell>
             ))}
           </Row>

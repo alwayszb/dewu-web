@@ -5,7 +5,6 @@
 </style>
 
 <script>
-import { Trends } from '@/components';
 import { sellSnapshotApi } from '@/api';
 
 const name = 'trends-modal';
@@ -19,7 +18,11 @@ export default {
     },
     product: {
       type: Object,
-      default: () => ({}),
+      validator({ productSizes, name, spuId, articleNumber }) {
+        return (
+          productSizes && name !== undefined && spuId !== undefined && articleNumber !== undefined
+        );
+      },
     },
   },
   computed: {
@@ -101,7 +104,7 @@ export default {
             ))}
           </a-radio-group>
         )}
-        <Trends articleNumber={this.product.articleNumber} size={this.size} />
+        <trends articleNumber={this.product.articleNumber} size={this.size} />
         <div slot="footer">
           <Button onClick={this.onClose}>Close</Button>
         </div>

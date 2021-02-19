@@ -3,11 +3,11 @@
 </style>
 
 <script>
-import { ProductCard } from '@/components';
-import { productApi, stockApi } from '@/api';
+import { productApi, productSizeApi, stockApi } from '@/api';
 import { time } from '@/utils';
 import { cloneDeep, get, round } from 'lodash';
 import StockForm from './components/stock-form';
+import { TrendsModal } from '@/views/product/search/components';
 
 const name = 'stock';
 
@@ -127,7 +127,7 @@ export default {
       },
       {
         dataIndex: 'priceInfo',
-        title: 'Du Price',
+        title: 'Price Info',
         width: 230,
         customRender: (value) => {
           const {
@@ -199,11 +199,13 @@ export default {
       },
       {
         title: 'Actions',
-        width: 110,
+        width: 140,
         customRender: (value, record, index) => {
           return (
             <div>
-              {record.status === 'in_stock' && !!record.stockPrice && (
+              <a-button size="small" icon="stock" onClick={() => this.onViewTrends(record)} />
+
+              {record.status === 'in_stock' && !!record.priceInfo.stockPrice && (
                 <a-tooltip title="set sold">
                   <a-button
                     type="primary"
@@ -250,6 +252,13 @@ export default {
       },
       columns: cloneDeep(this.backupColumns),
       sortType: 'profit',
+      trendsModalVisible: false,
+      actionRecordProduct: {
+        spuId: null,
+        name: null,
+        articleNumber: null,
+        productSizes: [],
+      },
     };
   },
 
@@ -270,11 +279,11 @@ export default {
             ...getPriceInfo({
               stockPrice,
               serviceFeeRate: 0.05,
-              realTimePrice: sellSnapshot.price,
+              realTimePrice: sellSnapshot ? sellSnapshot.price : '-',
             }),
             stockPrice,
-            tradeDesc: sellSnapshot.tradeDesc,
-            snapshotDate: sellSnapshot.createdAt,
+            tradeDesc: sellSnapshot ? sellSnapshot.tradeDesc : '-',
+            snapshotDate: sellSnapshot ? sellSnapshot.createdAt : '-',
           },
         }));
         if (this.sortType === 'profit') {
@@ -342,8 +351,9 @@ export default {
 
     updateStock(record, index) {
       const originStock = this.backupStockList[index];
+
       if (
-        record.stockPrice === originStock.stockPrice &&
+        record.priceInfo.stockPrice === originStock.priceInfo.stockPrice &&
         record.stockDate === originStock.stockDate &&
         record.soldPrice === originStock.soldPrice &&
         record.soldDate === originStock.soldDate
@@ -451,6 +461,17 @@ export default {
       }
       return null;
     },
+
+    async onViewTrends({ product }) {
+      const productSizes = await productSizeApi
+        .findSizesByArticleNumber(product.articleNumber)
+        .then(({ data }) => data);
+      this.actionRecordProduct = {
+        ...product,
+        productSizes,
+      };
+      this.trendsModalVisible = true;
+    },
   },
 
   render() {
@@ -480,7 +501,7 @@ export default {
               <Row space={8}>
                 {this.productList.map((product) => (
                   <Cell width={6} key={product.id}>
-                    <ProductCard data={product}>
+                    <product-card data={product}>
                       <a-button
                         type="primary"
                         size="small"
@@ -489,7 +510,7 @@ export default {
                       >
                         Add Stock
                       </a-button>
-                    </ProductCard>
+                    </product-card>
                   </Cell>
                 ))}
               </Row>
@@ -612,6 +633,9 @@ export default {
             </a-form-model-item>
           </a-form-model>
         </a-modal>
+
+        {/** trends modal */}
+        <TrendsModal v-model={this.trendsModalVisible} product={this.actionRecordProduct} />
       </div>
     );
   },
