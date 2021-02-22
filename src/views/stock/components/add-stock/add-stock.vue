@@ -53,7 +53,7 @@ export default {
       productApi
         .findProductsByQuery({
           query,
-          limit: 8,
+          limit: 6,
         })
         .then(({ data }) => {
           this.productList = data;
@@ -132,10 +132,10 @@ export default {
             {/** add stock: card */}
             {this.productList.length > 0 && (
               <div style={{ paddingBottom: '0.75rem' }}>
-                <Row space={8}>
+                <a-row gutter={8}>
                   {this.productList.map((product) => (
-                    <Cell width={6} key={product.id}>
-                      <product-card data={product}>
+                    <a-col span={8} key={product.id}>
+                      <product-card data={product} style={{ marginBottom: '0.5rem' }}>
                         <a-button
                           type="primary"
                           size="small"
@@ -145,9 +145,9 @@ export default {
                           Show Sizes
                         </a-button>
                       </product-card>
-                    </Cell>
+                    </a-col>
                   ))}
-                </Row>
+                </a-row>
               </div>
             )}
 

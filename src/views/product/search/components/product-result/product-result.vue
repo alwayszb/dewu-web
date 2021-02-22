@@ -40,9 +40,9 @@ export default {
           )}
           <icon-button icon="file-sync" tooltip="Sync Detail" onClick={this.onCaptureDetailClick} />
           <icon-button icon="stock" tooltip="View Trends" onClick={this.onTrendsClick} />
-          <Poptip content="Be sure to sync purchase records?" onConfirm={this.OnSyncClick}>
+          <a-popconfirm title="Be sure to sync purchase records?" onConfirm={this.OnSyncClick}>
             <icon-button icon="sync" />
-          </Poptip>
+          </a-popconfirm>
         </div>
       </product-card>
     );

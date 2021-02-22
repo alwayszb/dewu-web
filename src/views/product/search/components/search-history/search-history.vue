@@ -19,23 +19,19 @@ export default {
     return {};
   },
   methods: {
-    renderCloseIcon(onClose) {
-      return <i class={['h-icon-close', `${name}-close`]} onClick={onClose} />;
-    },
     renderTag(search, index) {
       const { value: searchValue } = search;
       return (
-        <span
-          class={['h-tag', `${name}-tag`]}
+        <a-tag
+          color="blue"
           key={search.value}
+          closable
+          style={{ cursor: 'pointer', marginBottom: '0.125rem' }}
+          onClose={() => this.onClose(search, index)}
           onClick={() => this.onSearch(search, index)}
         >
           {searchValue}
-          {this.renderCloseIcon((e) => {
-            e.stopPropagation();
-            this.onClose(search, index);
-          })}
-        </span>
+        </a-tag>
       );
     },
     onSearch(search, index) {
@@ -52,19 +48,16 @@ export default {
   },
   render() {
     return (
-      <Row class={name} type="flex" justify="center">
-        <Cell width={8}>
+      <a-row class={name} type="flex" justify="center">
+        <a-col span={8}>
           {this.data.map((search, index) => this.renderTag(search, index))}
           {this.data.length > 3 && (
-            <i
-              class={['h-icon-trash', `${name}-clear-all`]}
-              v-tooltip
-              content="Clear all"
-              onClick={this.onClearAll}
-            />
+            <a-tooltip title="Clear All" mouseEnterDelay={0} mouseLeaveDelay={0}>
+              <a-icon type="delete" class={`${name}-clear-all`} onClick={this.onClearAll} />
+            </a-tooltip>
           )}
-        </Cell>
-      </Row>
+        </a-col>
+      </a-row>
     );
   },
 };

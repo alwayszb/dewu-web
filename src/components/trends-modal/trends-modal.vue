@@ -115,7 +115,7 @@ export default {
     renderFooter() {
       return (
         <div slot="footer">
-          <Button onClick={this.onClose}>Close</Button>
+          <a-button onClick={this.onClose}>Close</a-button>
         </div>
       );
     },

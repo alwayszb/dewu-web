@@ -12,7 +12,7 @@ export default {
     },
     span: {
       type: Number,
-      default: 4,
+      default: 6,
     },
   },
   data() {
@@ -39,9 +39,9 @@ export default {
   },
   render() {
     return (
-      <Row class={name} space={8}>
+      <a-row class={name} gutter={8}>
         {this.data.map((product) => (
-          <Cell width={this.span} xs={24} sm={12} md={8} key={product.id}>
+          <a-col span={this.span} key={product.id}>
             <ProductResult
               data={product}
               onStar={this.onStar}
@@ -49,10 +49,11 @@ export default {
               onViewTrends={this.onViewTrends}
               onSync={this.onSyncPurchaseRecords}
               onCaptureDetail={this.onCaptureDetail}
+              style={{ marginBottom: '0.5rem' }}
             />
-          </Cell>
+          </a-col>
         ))}
-      </Row>
+      </a-row>
     );
   },
 };

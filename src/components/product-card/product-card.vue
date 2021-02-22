@@ -29,8 +29,8 @@ export default {
     return (
       <div class={name}>
         <div class={`${name}-header`}>
-          <Row space={8}>
-            <Cell width={8}>
+          <a-row gutter={8}>
+            <a-col span={8}>
               <div class="flex-center">
                 <img
                   class={`${name}-image`}
@@ -39,8 +39,8 @@ export default {
                   onClick={() => this.onImagePreview(image)}
                 />
               </div>
-            </Cell>
-            <Cell width={16}>
+            </a-col>
+            <a-col span={16}>
               <a
                 class={`${name}-header-title`}
                 href={`https://m.poizon.com/router/product/ProductDetail?spuId=${this.data.spuId}`}
@@ -48,8 +48,8 @@ export default {
               >
                 {title}
               </a>
-            </Cell>
-          </Row>
+            </a-col>
+          </a-row>
         </div>
         <div class={`${name}-content`}>
           <div class="text-ellipsis">

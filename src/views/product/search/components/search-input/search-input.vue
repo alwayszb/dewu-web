@@ -15,30 +15,23 @@ export default {
     return {};
   },
   methods: {
-    onKeypress({ keyCode }) {
-      if (keyCode === 13 && this.data.value) {
-        this.onSearch();
+    onSearch(value) {
+      if (value) {
+        this.$emit('search', this.data);
       }
-    },
-    onSearch() {
-      this.$emit('search', this.data);
     },
   },
   render() {
     return (
-      <Row type="flex" justify="center" style={{ margin: '4rem 0 0.5rem' }}>
-        <Cell width={8}>
-          <div class="h-input-group" style={{ width: '100%' }}>
-            <input
-              v-model={this.data.value}
-              type="text"
-              placeholder="Article Number, Title and SPU ID supported"
-              onKeypress={this.onKeypress}
-            />
-            <Button color="primary" hover icon="h-icon-search" onClick={this.onSearch} />
-          </div>
-        </Cell>
-      </Row>
+      <a-row type="flex" justify="center" style={{ margin: '2rem 0 0.5rem' }}>
+        <a-col span={8}>
+          <a-input-search
+            v-model={this.data.value}
+            placeholder="Article Number, Title and SPU ID supported"
+            onSearch={this.onSearch}
+          />
+        </a-col>
+      </a-row>
     );
   },
 };

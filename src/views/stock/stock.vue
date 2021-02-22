@@ -145,13 +145,19 @@ export default {
           const valueDisplay = (
             <div>
               <div>
-                <a-tooltip title={time.formatToTime(snapshotDate)}>
+                <a-tooltip
+                  title={time.formatToTime(snapshotDate)}
+                  mouseEnterDelay={0}
+                  mouseLeaveDelay={0}
+                >
                   <a-tag>
                     {tradeDesc} | {snapshotPrice}
                   </a-tag>
                 </a-tooltip>
                 <a-tooltip
                   title={`${snapshotPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
+                  mouseEnterDelay={0}
+                  mouseLeaveDelay={0}
                 >
                   <a-tag>到手: {salesRevenue}</a-tag>
                 </a-tooltip>
@@ -437,14 +443,12 @@ export default {
           dataSource={this.renderedStockList}
           columns={this.columns}
           rowKey="id"
-          size="small"
           pagination={false}
-          style={{ background: '#fff' }}
           rowClassName={this.getRowClassName}
         />
 
         {/** trends modal */}
-        {!isEmpty(this.actionStock) && (
+        {!lodash.isEmpty(this.actionStock) && (
           <trends-modal
             v-model={this.trendsModalVisible}
             articleNumber={this.actionStock.product.articleNumber}

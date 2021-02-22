@@ -1,33 +1,50 @@
 <template>
-  <Layout id="app">
-    <HHeader theme="dark" :style="{ height: '44px' }">
-      <Menu ref="menu" :datas="menuDatas" mode="horizontal" @select="onMenuSelect" />
-    </HHeader>
-    <Content :style="{ overflow: 'auto' }">
-      <keep-alive>
-        <router-view class="animate__animated animate__fadeIn" />
-      </keep-alive>
-    </Content>
-  </Layout>
+  <a-layout id="app">
+    <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%', height: '3rem' }">
+      <a-menu
+        v-model="selectedMenu"
+        theme="dark"
+        mode="horizontal"
+        :style="{ lineHeight: '3rem' }"
+        @select="onMenuSelect"
+      >
+        <a-menu-item v-for="option in menuOptions" :key="option.key">
+          <a-icon :type="option.icon" />
+          <span>{{ option.title }}</span>
+        </a-menu-item>
+      </a-menu>
+    </a-layout-header>
+    <a-layout-content :style="{ marginTop: '3rem', overflow: 'auto' }">
+      <a-spin :spinning="isLoading">
+        <keep-alive>
+          <router-view class="animate__animated animate__fadeIn" />
+        </keep-alive>
+      </a-spin>
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'app',
   data() {
-    this.menuDatas = [
-      { title: 'Home', key: 'home', icon: 'h-icon-home' },
-      { title: 'Stock', key: 'stock', icon: 'h-icon-inbox' },
-      { title: 'Search', key: 'search', icon: 'h-icon-search' },
-      { title: 'Favorite', key: 'favorite', icon: 'h-icon-star-on' },
-      { title: 'Task', key: 'task', icon: 'h-icon-task' },
-      { title: 'Notice', key: 'notice', icon: 'h-icon-message' },
-      { title: 'Calendar', key: 'calendar', icon: 'h-icon-calendar' },
+    this.menuOptions = [
+      { title: 'Home', key: 'home', icon: 'home' },
+      { title: 'Stock', key: 'stock', icon: 'appstore' },
+      { title: 'Search', key: 'search', icon: 'search' },
+      { title: 'Favorite', key: 'favorite', icon: 'star' },
+      { title: 'Task', key: 'task', icon: 'monitor' },
+      { title: 'Calendar', key: 'calendar', icon: 'calendar' },
     ];
 
     return {
-      siderCollapsed: false,
+      selectedMenu: [],
     };
+  },
+  computed: {
+    ...mapGetters(['isLoading']),
   },
   mounted() {
     this.triggerSelectMenu();
@@ -35,7 +52,7 @@ export default {
   methods: {
     triggerSelectMenu() {
       if (this.$route.name) {
-        this.$refs.menu.select(this.$route.name);
+        this.selectedMenu = [this.$route.name];
       }
     },
     onMenuSelect({ key: name }) {

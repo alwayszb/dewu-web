@@ -42,10 +42,10 @@ export default {
     return (
       <div class={name}>
         <div style={{ padding: '0.75rem 0.5rem' }}>
-          <Row space={8}>
+          <a-row gutter={8}>
             {this.productList.map((product) => (
-              <Cell width={6} key={product.id}>
-                <product-card data={product}>
+              <a-col span={6} key={product.id}>
+                <product-card data={product} style={{ marginBottom: '0.5rem' }}>
                   <div slot="footer">{time.formatToTime(product.createdAt)}</div>
                   <div slot="footerExtra">
                     {!product.favorite && (
@@ -70,9 +70,9 @@ export default {
                     />
                   </div>
                 </product-card>
-              </Cell>
+              </a-col>
             ))}
-          </Row>
+          </a-row>
         </div>
 
         {/** trends modal */}

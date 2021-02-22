@@ -106,7 +106,7 @@ export default {
         {!this.loading && this.chartData.rows.length !== 0 && (
           <div class="text-center" style={{ marginBottom: '1rem' }}>
             {this.historyMaxPriceItem && (
-              <span class="h-tag h-tag-bg-primary">
+              <a-tag color="blue">
                 <span>历史最高: </span>
                 <span style={{ fontWeight: 600, fontSize: '1rem', textDecoration: 'underline' }}>
                   {this.historyMaxPriceItem.price}
@@ -116,19 +116,19 @@ export default {
                   {`${this.historyMaxPriceItem.purchaseDate} ${this.historyMaxPriceItem.orderSubTypeName}`}
                   )
                 </span>
-              </span>
+              </a-tag>
             )}
             {this.historyMinPriceItem && (
-              <span class="h-tag h-tag-bg-blue">
+              <a-tag color="green">
                 <span>历史最低: </span>
                 <span style={{ fontWeight: 600, fontSize: '1rem', textDecoration: 'underline' }}>
                   {this.historyMinPriceItem.price}
                 </span>
                 <span> ({this.historyMinPriceItem.purchaseDate})</span>
-              </span>
+              </a-tag>
             )}
             {this.latestPriceItem && (
-              <span class="h-tag">
+              <a-tag>
                 <span>最新低价: </span>
                 <span style={{ fontWeight: 600, fontSize: '1rem', textDecoration: 'underline' }}>
                   {this.latestPriceItem.min}
@@ -137,7 +137,7 @@ export default {
                   ({`${this.latestPriceItem.purchaseDate} ${this.latestPriceItem.orderSubTypeName}`}
                   )
                 </span>
-              </span>
+              </a-tag>
             )}
           </div>
         )}

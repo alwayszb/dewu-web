@@ -1,17 +1,21 @@
 import axios from 'axios';
-import heyui from 'heyui';
+import Vue from 'vue';
+import store from '@/store';
 
 const request = axios.create({
   baseURL: process.env.VUE_APP_API_BASE,
 });
 
-let loadingCount = 0;
+const showNotice = ({ key = 'default', type = 'error', title, description }) => {
+  Vue.prototype.$notification.close(key);
+  Vue.prototype.$notification[type]({ key, message: title, description });
+};
+
 request.interceptors.request.use(
   (config) => {
     const { contentLoading = true } = config;
     if (contentLoading) {
-      loadingCount += 1;
-      heyui.$Loading('Loading...');
+      store.commit('showLoading');
     }
     return config;
   },
@@ -24,26 +28,15 @@ request.interceptors.response.use(
   (res) => {
     const { contentLoading = true } = res.config;
     if (contentLoading) {
-      loadingCount -= 1;
-      if (loadingCount === 0) {
-        setTimeout(() => {
-          heyui.$Loading.close();
-        }, 100);
-      }
+      store.commit('hideLoading');
     }
     return res;
   },
   (err) => {
-    loadingCount -= 1;
-    if (loadingCount === 0) {
-      setTimeout(() => {
-        heyui.$Loading.close();
-      }, 100);
-    }
-    heyui.$Notice({
-      type: 'error',
+    store.commit('hideLoading');
+    showNotice({
       title: '请求失败',
-      content: err.message,
+      description: err.message,
     });
     Promise.reject(err);
   },

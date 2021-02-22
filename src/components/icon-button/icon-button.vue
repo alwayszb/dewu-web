@@ -46,16 +46,11 @@ export default {
   },
   render() {
     return (
-      <a-button
-        class={name}
-        type={this.type}
-        size={this.size}
-        onClick={this.onClick}
-        v-tooltip
-        content={this.tooltip}
-      >
-        <a-icon type={this.icon} theme={this.filled ? 'filled' : 'outlined'} />
-      </a-button>
+      <a-tooltip title={this.tooltip} mouseEnterDelay={0} mouseLeaveDelay={0}>
+        <a-button class={name} type={this.type} size={this.size} onClick={this.onClick}>
+          <a-icon type={this.icon} theme={this.filled ? 'filled' : 'outlined'} />
+        </a-button>
+      </a-tooltip>
     );
   },
 };
