@@ -1,0 +1,20 @@
+@import '~animate.css/source/_vars.css';
+@import '~animate.css/source/_base.css';
+@import '~animate.css/source/fading_entrances/fadeIn.css';
+
+.animated.glow {
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  animation-name: glow;
+}
+
+@keyframes glow {
+  0% {
+    background-color: #fcfcfd;
+  }
+  30% {
+    background-color: #fff6cd;
+  }
+  100% {
+    background-color: #fcfcfd;
+  }
+}

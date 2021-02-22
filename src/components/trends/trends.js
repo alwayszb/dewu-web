@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+import { lodash } from '@/utils';
 
 const labelFormatter = (params, { historyMaxPriceItem, historyMinPriceItem, chartData }) => {
   const { seriesIndex, data, dataIndex } = params;

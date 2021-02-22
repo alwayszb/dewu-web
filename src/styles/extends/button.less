@@ -1,0 +1,35 @@
+@import '~ant-design-vue/es/button/style/mixin';
+
+// warning button
+@btn-warning-color: #fff;
+@btn-warning-bg: color(~`colorPalette('@{warning-color}', 6) `);
+@btn-warning-border: color(~`colorPalette('@{warning-color}', 6) `);
+
+&-background-ghost&-warning {
+  .button-variant-ghost(@btn-warning-border);
+}
+
+.btn-warning() {
+  .button-variant-primary(@btn-warning-color, @btn-warning-bg);
+}
+
+.ant-btn-warning {
+  .btn-warning;
+}
+
+// success button
+@btn-success-color: #fff;
+@btn-success-bg: color(~`colorPalette('@{success-color}', 6) `);
+@btn-success-border: color(~`colorPalette('@{success-color}', 6) `);
+
+&-background-ghost&-success {
+  .button-variant-ghost(@btn-success-border);
+}
+
+.btn-success() {
+  .button-variant-primary(@btn-success-color, @btn-success-bg);
+}
+
+.ant-btn-success {
+  .btn-success;
+}

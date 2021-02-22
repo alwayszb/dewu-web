@@ -1,7 +1,7 @@
 <script>
 import { productApi } from '@/api';
 import { time } from '@/utils';
-import { isEmpty } from 'lodash';
+import { lodash } from '@/utils';
 
 const name = 'home';
 
@@ -76,7 +76,7 @@ export default {
         </div>
 
         {/** trends modal */}
-        {!isEmpty(this.actionRecord) && (
+        {!lodash.isEmpty(this.actionRecord) && (
           <trends-modal
             v-model={this.trendsModalVisible}
             articleNumber={this.actionRecord.articleNumber}

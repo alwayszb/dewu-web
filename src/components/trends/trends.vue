@@ -1,5 +1,5 @@
 <script>
-import lodash from 'lodash';
+import { lodash } from '@/utils';
 import { purchaseRecordApi } from '@/api';
 import { labelFormatter, normalize } from './trends';
 

@@ -4,8 +4,7 @@
 
 <script>
 import { stockApi } from '@/api';
-import { time } from '@/utils';
-import { cloneDeep, isEmpty, round } from 'lodash';
+import { time, lodash } from '@/utils';
 import AddStock from './components/add-stock';
 
 const name = 'stock';
@@ -15,12 +14,12 @@ const getProfitInfo = (stock) => {
   if (!stockPrice) {
     return {};
   }
-  const techServiceFee = round(snapshotPrice * serviceFeeRate, 2);
-  const transferFee = round(snapshotPrice * 0.01, 2);
-  const serviceFee = round(techServiceFee + transferFee + 33, 2); // 打包费+鉴别费=33
-  const salesRevenue = round(snapshotPrice - serviceFee, 2);
-  const profit = round(salesRevenue - stockPrice, 2);
-  const profitPercent = round((profit / stockPrice) * 100, 2);
+  const techServiceFee = lodash.round(snapshotPrice * serviceFeeRate, 2);
+  const transferFee = lodash.round(snapshotPrice * 0.01, 2);
+  const serviceFee = lodash.round(techServiceFee + transferFee + 33, 2); // 打包费+鉴别费=33
+  const salesRevenue = lodash.round(snapshotPrice - serviceFee, 2);
+  const profit = lodash.round(salesRevenue - stockPrice, 2);
+  const profitPercent = lodash.round((profit / stockPrice) * 100, 2);
   return {
     techServiceFee, // 技术服务费
     transferFee, // 转账手续费
@@ -219,7 +218,7 @@ export default {
         search: '',
         category: null,
       },
-      columns: cloneDeep(this.backupColumns),
+      columns: lodash.cloneDeep(this.backupColumns),
       sortType: 'profit',
       trendsModalVisible: false,
       addStockModalVisible: false,
@@ -228,7 +227,7 @@ export default {
 
   methods: {
     toBackUpStockList() {
-      this.backupStockList = cloneDeep(this.stockList);
+      this.backupStockList = lodash.cloneDeep(this.stockList);
     },
 
     loadStockList() {

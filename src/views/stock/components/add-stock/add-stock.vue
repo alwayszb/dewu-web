@@ -8,7 +8,7 @@
 
 <script>
 import { productApi, stockApi } from '@/api';
-import { isEmpty } from 'lodash';
+import { lodash } from '@/utils';
 import StockForm from '../stock-form';
 
 const name = 'add-stock';
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     modalTitle() {
-      if (isEmpty(this.actionProduct)) {
+      if (lodash.isEmpty(this.actionProduct)) {
         return 'Add Stock';
       }
       const { articleNumber, name } = this.actionProduct;
@@ -151,7 +151,7 @@ export default {
               </div>
             )}
 
-            {!isEmpty(this.actionProduct) && (
+            {!lodash.isEmpty(this.actionProduct) && (
               <StockForm ref="stockForm" product={this.actionProduct} />
             )}
           </div>

@@ -1,7 +1,7 @@
 <script>
 import { time } from '@/utils';
 import { productApi } from '@/api';
-import { isEmpty } from 'lodash';
+import { lodash } from '@/utils';
 
 const name = 'task';
 
@@ -113,7 +113,7 @@ export default {
           pagination={false}
         />
         {/** trends modal */}
-        {!isEmpty(this.actionRecord) && (
+        {!lodash.isEmpty(this.actionRecord) && (
           <trends-modal
             v-model={this.trendsModalVisible}
             articleNumber={this.actionRecord.articleNumber}

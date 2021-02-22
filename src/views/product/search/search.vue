@@ -2,7 +2,7 @@
 import { commonMixin } from '@/mixins';
 import { captureApi, productApi } from '@/api';
 import { SearchInput, SearchHistory, SearchList } from './components';
-import { isEmpty } from 'lodash';
+import { lodash } from '@/utils';
 
 const name = 'search';
 
@@ -146,7 +146,7 @@ export default {
           onSync={this.onSyncPurchaseRecords}
           onCaptureDetail={this.onCaptureDetail}
         />
-        {!isEmpty(this.selectedProduct) && (
+        {!lodash.isEmpty(this.selectedProduct) && (
           <trends-modal
             v-model={this.trendsModalVisible}
             articleNumber={this.selectedProduct.articleNumber}
