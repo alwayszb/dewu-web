@@ -5,7 +5,7 @@ import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon.vue';
 import Antv from 'ant-design-vue';
 import Clipboard from 'v-clipboard';
-import 'ant-design-vue/dist/antd.css';
+// import VModal from 'vue-js-modal';
 import components from '@/components';
 import App from './App.vue';
 import router from './router';
@@ -19,6 +19,7 @@ Vue.use(VCharts);
 Vue.use(HeyUI);
 Vue.use(Antv);
 Vue.use(Clipboard);
+// Vue.use(VModal);
 Vue.use(components);
 Vue.component('v-icon', Icon);
 

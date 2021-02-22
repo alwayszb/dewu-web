@@ -19,43 +19,18 @@ export default {
     return {};
   },
   methods: {
-    onStarClick() {
-      this.$emit('star', this.data);
-    },
-    onCancelStarClick() {
-      this.$emit('cancelStar', this.data);
-    },
-    onTrendsClick() {
-      this.$emit('viewTrends', this.data);
-    },
     onImagePreview(url) {
       this.$ImagePreview(url);
     },
-    OnSyncClick() {
-      this.$emit('sync', this.data);
-    },
-    onCaptureDetailClick() {
-      this.$emit('captureDetail', this.data);
-    },
   },
   render() {
-    const {
-      name: title,
-      image,
-      articleNumber,
-      sellPrice,
-      sellDate,
-      favorite,
-      productSizes,
-    } = this.data;
-
-    const hasTrends = productSizes && productSizes.length > 0;
+    const { name: title, image, articleNumber, sellPrice, sellDate } = this.data;
 
     return (
       <div class={name}>
         <div class={`${name}-header`}>
-          <Row space={10}>
-            <Cell width={12}>
+          <Row space={8}>
+            <Cell width={8}>
               <div class="flex-center">
                 <img
                   class={`${name}-image`}
@@ -65,7 +40,7 @@ export default {
                 />
               </div>
             </Cell>
-            <Cell width={12}>
+            <Cell width={16}>
               <a
                 class={`${name}-header-title`}
                 href={`https://m.poizon.com/router/product/ProductDetail?spuId=${this.data.spuId}`}
@@ -91,35 +66,8 @@ export default {
           </div>
         </div>
         <div class={`${name}-footer`}>
-          {this.$slots.footer ? (
-            this.$slots.footer
-          ) : (
-            <div>
-              {!favorite && (
-                <v-icon name="regular/star" v-tooltip content="star" onClick={this.onStarClick} />
-              )}
-              {favorite && (
-                <v-icon
-                  name="star"
-                  v-tooltip
-                  content="cancel star"
-                  onClick={this.onCancelStarClick}
-                />
-              )}
-              <v-icon
-                name="camera"
-                v-tooltip
-                content="capture detail"
-                onClick={this.onCaptureDetailClick}
-              />
-              {hasTrends && (
-                <v-icon name="chart-line" v-tooltip content="trends" onClick={this.onTrendsClick} />
-              )}
-              <Poptip content="Be sure to sync?" onConfirm={this.OnSyncClick}>
-                <v-icon name="spider" />
-              </Poptip>
-            </div>
-          )}
+          <div class={`${name}-footer-main`}>{this.$slots.footer}</div>
+          <div class={`${name}-footer-extra`}>{this.$slots.footerExtra}</div>
         </div>
       </div>
     );

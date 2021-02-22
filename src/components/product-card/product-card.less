@@ -22,7 +22,7 @@
       min-height: 3.5625rem;
     }
 
-    @width: 6.25vw;
+    @width: 80%;
     img {
       height: @width * 0.64;
       width: @width;
@@ -40,10 +40,13 @@
   &-footer {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     border-top: 1px solid #f8f8f8;
+
+    &-main {
+      flex: 1;
+    }
 
     svg {
       cursor: pointer;

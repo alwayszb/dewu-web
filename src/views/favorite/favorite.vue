@@ -1,6 +1,7 @@
 <script>
 import { time } from '@/utils';
 import { productApi } from '@/api';
+import { isEmpty } from 'lodash';
 
 const name = 'task';
 
@@ -58,12 +59,19 @@ export default {
         width: 200,
         customRender: (value, record, index) => {
           return (
-            <a-button
-              type="danger"
-              size="small"
-              icon="delete"
-              onClick={() => this.onDelete(record, index)}
-            />
+            <div>
+              <a-button
+                size="small"
+                icon="stock"
+                onClick={() => this.onViewTrends(record, index)}
+              />
+              <a-button
+                type="danger"
+                size="small"
+                icon="delete"
+                onClick={() => this.onDelete(record, index)}
+              />
+            </div>
           );
         },
       },
@@ -71,19 +79,28 @@ export default {
 
     return {
       dataSource: [],
+      actionRecord: {},
+      trendsModalVisible: false,
     };
   },
-  created() {
+  activated() {
     productApi.findFavoriteProducts().then(({ data }) => {
       this.dataSource = data;
     });
   },
   methods: {
-    onDelete({ id }, index) {
+    onDelete(record, index) {
+      this.actionRecord = record;
+      const { id } = record;
       productApi.removeProductFavorite(id).then(() => {
         this.$message.success('Delete success');
         this.dataSource.splice(index, 1);
       });
+    },
+    onViewTrends(record) {
+      console.log(record);
+      this.actionRecord = record;
+      this.trendsModalVisible = true;
     },
   },
   render() {
@@ -94,7 +111,15 @@ export default {
           columns={this.columns}
           rowKey={rowKey}
           pagination={false}
-        ></a-table>
+        />
+        {/** trends modal */}
+        {!isEmpty(this.actionRecord) && (
+          <trends-modal
+            v-model={this.trendsModalVisible}
+            articleNumber={this.actionRecord.articleNumber}
+            productName={this.actionRecord.name}
+          />
+        )}
       </div>
     );
   },

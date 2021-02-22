@@ -7,6 +7,14 @@ const resolve = (url) => {
 module.exports = {
   devServer: {
     port: 9000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: { '^/api': '' },
+      },
+    },
   },
 
   chainWebpack: (config) => {

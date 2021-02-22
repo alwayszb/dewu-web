@@ -1,11 +1,11 @@
 import request from '@/request';
 
 export default {
-  getSellSnapshotBySpuId(spuId) {
+  getSellSnapshotByArticleNumber(articleNumber) {
     const url = '/sell-snapshots';
     return request.get(url, {
       params: {
-        spuId,
+        articleNumber,
       },
       contentLoading: false,
     });

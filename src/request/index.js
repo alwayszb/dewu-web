@@ -28,7 +28,7 @@ request.interceptors.response.use(
       if (loadingCount === 0) {
         setTimeout(() => {
           heyui.$Loading.close();
-        }, 500);
+        }, 100);
       }
     }
     return res;
@@ -38,7 +38,7 @@ request.interceptors.response.use(
     if (loadingCount === 0) {
       setTimeout(() => {
         heyui.$Loading.close();
-      }, 500);
+      }, 100);
     }
     heyui.$Notice({
       type: 'error',

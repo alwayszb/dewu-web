@@ -1,7 +1,8 @@
 <script>
 import { commonMixin } from '@/mixins';
 import { captureApi, productApi } from '@/api';
-import { SearchInput, SearchHistory, SearchList, TrendsModal } from './components';
+import { SearchInput, SearchHistory, SearchList } from './components';
+import { isEmpty } from 'lodash';
 
 const name = 'search';
 
@@ -145,11 +146,13 @@ export default {
           onSync={this.onSyncPurchaseRecords}
           onCaptureDetail={this.onCaptureDetail}
         />
-        <TrendsModal
-          v-model={this.trendsModalVisible}
-          product={this.selectedProduct}
-          onSync={this.onSyncPurchaseRecords}
-        />
+        {!isEmpty(this.selectedProduct) && (
+          <trends-modal
+            v-model={this.trendsModalVisible}
+            articleNumber={this.selectedProduct.articleNumber}
+            productName={this.selectedProduct.name}
+          />
+        )}
       </div>
     );
   },

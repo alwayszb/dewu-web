@@ -1,12 +1,4 @@
-@import '~ant-design-vue/lib/style/themes/default.less';
-
 @name: stock;
-
-.@{name} {
-  &-header {
-    padding: 0 0.75rem 0;
-  }
-}
 
 .hover-edit {
   display: inline-block;
@@ -29,5 +21,11 @@
 /deep/ .saleable {
   td {
     background: @red-1;
+  }
+}
+
+/deep/ .no-stock-price {
+  td {
+    background: @gold-2;
   }
 }

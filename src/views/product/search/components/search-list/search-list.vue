@@ -1,4 +1,6 @@
 <script>
+import ProductResult from '../product-result';
+
 const name = 'search-list';
 
 export default {
@@ -39,8 +41,8 @@ export default {
     return (
       <Row class={name} space={8}>
         {this.data.map((product) => (
-          <Cell width={this.span} key={product.id}>
-            <product-card
+          <Cell width={this.span} xs={24} sm={12} md={8} key={product.id}>
+            <ProductResult
               data={product}
               onStar={this.onStar}
               onCancelStar={this.onCancelStar}
