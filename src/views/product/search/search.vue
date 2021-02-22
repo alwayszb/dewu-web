@@ -89,32 +89,20 @@ export default {
           captureAll: false,
         })
         .then(() => {
-          this.$Message({
-            type: 'success',
-            text: 'Sync job started',
-          });
+          this.$message.success('Sync job started');
         })
         .catch(() => {
-          this.$Message({
-            type: 'error',
-            text: 'Call sync job failed',
-          });
+          this.$message.error('Call sync job failed');
         });
     },
     onCaptureDetail({ articleNumber }) {
       captureApi
         .captureDetail(articleNumber)
         .then(() => {
-          this.$Message({
-            type: 'success',
-            text: 'Capture detail started',
-          });
+          this.$message.success('Capture detail started');
         })
         .catch(() => {
-          this.$Message({
-            type: 'error',
-            text: 'Call capture detail failed',
-          });
+          this.$message.error('Call capture detail failed');
         });
     },
     onStar(product) {

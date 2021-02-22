@@ -70,10 +70,7 @@ export default {
         .findPurchaseRecordsByProduct({ articleNumber: this.articleNumber, size: this.size })
         .then(({ data }) => {
           if (data.length === 0) {
-            this.$Message({
-              type: 'warn',
-              text: 'No trends data',
-            });
+            this.$message.warning('No trends data');
             return;
           }
 
