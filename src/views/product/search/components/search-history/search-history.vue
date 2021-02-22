@@ -52,9 +52,12 @@ export default {
         <a-col span={8}>
           {this.data.map((search, index) => this.renderTag(search, index))}
           {this.data.length > 3 && (
-            <a-tooltip title="Clear All" mouseEnterDelay={0} mouseLeaveDelay={0}>
-              <a-icon type="delete" class={`${name}-clear-all`} onClick={this.onClearAll} />
-            </a-tooltip>
+            <a-icon
+              type="delete"
+              class={`${name}-clear-all`}
+              v-tooltip="Clear All"
+              onClick={this.onClearAll}
+            />
           )}
         </a-col>
       </a-row>

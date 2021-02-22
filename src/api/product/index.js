@@ -27,4 +27,8 @@ export default {
     const url = `/products/${id}/favorite`;
     return request.delete(url);
   },
+  findProductsReleaseRecently() {
+    const url = '/products/release-recently';
+    return request.get(url);
+  },
 };

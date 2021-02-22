@@ -54,7 +54,13 @@ export default {
         title: 'Product',
         width: 100,
         customRender: (value, record) => {
-          return <img src={value} alt={record.product.title} width={80} />;
+          return (
+            <img
+              v-lazy={value}
+              alt={record.product.title}
+              style={{ height: '53.75px', width: '84px' }}
+            />
+          );
         },
       },
       {
@@ -125,7 +131,7 @@ export default {
       },
       {
         title: 'Price Info',
-        width: 230,
+        width: 240,
         customRender: (value, record) => {
           if (!record.stockPrice) {
             return '-';
@@ -145,22 +151,14 @@ export default {
           const valueDisplay = (
             <div>
               <div>
-                <a-tooltip
-                  title={time.formatToTime(snapshotDate)}
-                  mouseEnterDelay={0}
-                  mouseLeaveDelay={0}
+                <a-tag v-tooltip={time.formatToTime(snapshotDate)}>
+                  {tradeDesc} | {snapshotPrice}
+                </a-tag>
+                <a-tag
+                  v-tooltip={`${snapshotPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
                 >
-                  <a-tag>
-                    {tradeDesc} | {snapshotPrice}
-                  </a-tag>
-                </a-tooltip>
-                <a-tooltip
-                  title={`${snapshotPrice} - ${techServiceFee} - ${transferFee} - 33 = ${salesRevenue}`}
-                  mouseEnterDelay={0}
-                  mouseLeaveDelay={0}
-                >
-                  <a-tag>到手: {salesRevenue}</a-tag>
-                </a-tooltip>
+                  到手: {salesRevenue}
+                </a-tag>
               </div>
               <div style={{ marginTop: '0.25rem' }}>
                 <a-tag color={this.getProfitTagColor(profit)}>

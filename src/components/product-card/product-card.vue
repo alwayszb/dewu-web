@@ -18,11 +18,6 @@ export default {
 
     return {};
   },
-  methods: {
-    onImagePreview(url) {
-      this.$ImagePreview(url);
-    },
-  },
   render() {
     const { name: title, image, articleNumber, sellPrice, sellDate } = this.data;
 
@@ -31,13 +26,8 @@ export default {
         <div class={`${name}-header`}>
           <a-row gutter={8}>
             <a-col span={8}>
-              <div class="flex-center">
-                <img
-                  class={`${name}-image`}
-                  src={image}
-                  alt={title}
-                  onClick={() => this.onImagePreview(image)}
-                />
+              <div v-viewer={{ navbar: false, toolbar: false }}>
+                <img class={`${name}-image`} v-lazy={image} alt={title} height="auto" width="80%" />
               </div>
             </a-col>
             <a-col span={16}>
@@ -46,22 +36,22 @@ export default {
                 href={`https://m.poizon.com/router/product/ProductDetail?spuId=${this.data.spuId}`}
                 target="_blank"
               >
-                {title}
+                <span>{title}</span>
               </a>
             </a-col>
           </a-row>
         </div>
         <div class={`${name}-content`}>
-          <div class="text-ellipsis">
-            <span class="primary-color">Article Number: </span>
+          <div>
+            <span>Article Number: </span>
             <span style={{ fontWeight: 500 }}>{articleNumber}</span>
           </div>
           <div>
-            <span class="primary-color">Sell Price: </span>
+            <span>Sell Price: </span>
             <span style={{ fontWeight: 500 }}>{sellPrice}</span>
           </div>
           <div>
-            <span class="primary-color">Sell Date: </span>
+            <span>Sell Date: </span>
             <span style={{ fontWeight: 500 }}>{sellDate}</span>
           </div>
         </div>

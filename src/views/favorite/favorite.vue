@@ -17,7 +17,9 @@ export default {
         title: 'Product',
         width: 100,
         customRender: (value, record) => {
-          return <img src={value} alt={record.title} width={80} />;
+          return (
+            <img v-lazy={value} alt={record.title} style={{ height: '53.75px', width: '84px' }} />
+          );
         },
       },
       {
