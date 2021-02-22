@@ -104,7 +104,7 @@ export default {
     return (
       <div class={name}>
         {!this.loading && this.chartData.rows.length !== 0 && (
-          <div class="text-center" style={{ marginBottom: '1rem' }}>
+          <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
             {this.historyMaxPriceItem && (
               <a-tag color="blue">
                 <span>历史最高: </span>
