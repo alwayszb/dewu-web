@@ -208,7 +208,7 @@ export default {
             )}
           </div>
 
-          <StockSummary stocks={this.stockList} />
+          {this.stockList.length > 0 && <StockSummary stocks={this.stockList} />}
         </div>
 
         <a-table

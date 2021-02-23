@@ -70,9 +70,10 @@ export default {
       });
     },
     onOpen() {
-      this.$emit('input', true);
+      this.selectedSize = this.size;
       this.loadProductSizes();
       this.loadSellSnapshots();
+      this.$emit('input', true);
     },
     onClose() {
       this.selectedSize = null;
