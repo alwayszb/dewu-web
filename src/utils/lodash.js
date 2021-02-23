@@ -8,6 +8,7 @@ import last from 'lodash/last';
 import flatMap from 'lodash/flatMap';
 import round from 'lodash/round';
 import cloneDeep from 'lodash/cloneDeep';
+import sumBy from 'lodash/sumBy';
 
 export default {
   orderBy,
@@ -19,4 +20,5 @@ export default {
   flatMap,
   round,
   cloneDeep,
+  sumBy,
 };
