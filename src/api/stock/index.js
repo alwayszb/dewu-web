@@ -1,18 +1,20 @@
 import request from '@/request';
 
 export default {
-  findAllStocks({ status }) {
+  findAllStocks({ query }) {
     const url = '/stocks';
     return request.get(url, {
       params: {
-        status,
+        query,
       },
     });
   },
 
-  createStock(stock) {
+  createStock(stock, { contentLoading = true } = {}) {
     const url = '/stocks';
-    return request.post(url, stock);
+    return request.post(url, stock, {
+      contentLoading,
+    });
   },
 
   updateStock(id, stock) {

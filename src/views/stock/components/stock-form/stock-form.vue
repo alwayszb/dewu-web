@@ -18,18 +18,23 @@ export default {
     return {
       sizeList: [],
       stocks: {},
+      sizeLoading: false,
     };
   },
 
   methods: {
     loadSizeList() {
-      productSizeApi.findSizesByArticleNumber(this.product.articleNumber).then(({ data }) => {
-        this.sizeList = data;
-        this.stocks = {};
-        this.sizeList.forEach(({ id }) => {
-          this.$set(this.stocks, id, 0);
-        });
-      });
+      this.sizeLoading = true;
+      productSizeApi
+        .findSizesByArticleNumber(this.product.articleNumber)
+        .then(({ data }) => {
+          this.sizeList = data;
+          this.stocks = {};
+          this.sizeList.forEach(({ id }) => {
+            this.$set(this.stocks, id, 0);
+          });
+        })
+        .finally(() => (this.sizeLoading = false));
     },
 
     renderSizeInput({ id, size }) {
@@ -39,7 +44,7 @@ export default {
             style={{
               display: 'inline-block',
               marginRight: '0.25rem',
-              width: '1.75rem',
+              width: '2rem',
               textAlign: 'right',
               color: '#999',
             }}
@@ -66,7 +71,11 @@ export default {
   },
 
   render() {
-    return <div>{this.sizeList.map((size) => this.renderSizeInput(size))}</div>;
+    return (
+      <a-spin spinning={this.sizeLoading}>
+        <div>{this.sizeList.map((size) => this.renderSizeInput(size))}</div>
+      </a-spin>
+    );
   },
 };
 </script>

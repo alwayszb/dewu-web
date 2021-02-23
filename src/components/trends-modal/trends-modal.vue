@@ -76,6 +76,8 @@ export default {
     },
     onClose() {
       this.selectedSize = null;
+      this.productSizes = [];
+      this.sellSnapshots = [];
       this.$emit('input', false);
     },
     getPriceBySkuId(skuId) {

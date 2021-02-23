@@ -29,6 +29,31 @@ const getProfitInfo = (stock) => {
   };
 };
 
+const normalize = (data) => {
+  const { stockPrice, sellSnapshots, ...res } = data;
+  const sellSnapshot = sellSnapshots && sellSnapshots.length > 0 ? sellSnapshots[0] : null;
+  const snapshotInfo = {};
+  if (sellSnapshot) {
+    const { createdAt, price, tradeDesc } = sellSnapshot;
+    Object.assign(snapshotInfo, {
+      snapshotDate: createdAt,
+      snapshotPrice: price / 100, // 售出价格
+      tradeDesc,
+    });
+  }
+  const stock = {
+    ...res,
+    editing: false,
+    serviceFeeRate: 0.05,
+    stockPrice,
+    sellSnapshots,
+    ...snapshotInfo,
+  };
+  const profitInfo = getProfitInfo(stock);
+  Object.assign(stock, profitInfo);
+  return stock;
+};
+
 export default {
   name,
 
@@ -36,15 +61,7 @@ export default {
     this.loadStockList();
   },
 
-  computed: {
-    renderedStockList() {
-      const { search, category: filterCategory } = this.filterOptions;
-      return this.stockList.filter(
-        ({ product, category }) =>
-          product.name.includes(search) && (!filterCategory || category === filterCategory),
-      );
-    },
-  },
+  computed: {},
 
   data() {
     this.name = name;
@@ -133,7 +150,7 @@ export default {
         title: 'Price Info',
         width: 240,
         customRender: (value, record) => {
-          if (!record.stockPrice) {
+          if (!record.stockPrice || record.sellSnapshots.length === 0) {
             return '-';
           }
 
@@ -218,10 +235,6 @@ export default {
       backupStockList: [],
       actionStock: {},
       actionStockIndex: 0,
-      filterOptions: {
-        search: '',
-        category: null,
-      },
       columns: lodash.cloneDeep(this.backupColumns),
       sortType: 'profit',
       trendsModalVisible: false,
@@ -234,31 +247,9 @@ export default {
       this.backupStockList = lodash.cloneDeep(this.stockList);
     },
 
-    loadStockList() {
-      stockApi.findAllStocks(this.filterOptions).then(({ data }) => {
-        let list = data.map((record) => {
-          const { stockPrice, sellSnapshots, ...res } = record;
-          const sellSnapshot = sellSnapshots[0];
-          const snapshotInfo = {};
-          if (sellSnapshot) {
-            const { createdAt, price, tradeDesc } = sellSnapshot;
-            Object.assign(snapshotInfo, {
-              snapshotDate: createdAt,
-              snapshotPrice: price / 100, // 售出价格
-              tradeDesc,
-            });
-          }
-          const stock = {
-            ...res,
-            editing: false,
-            serviceFeeRate: 0.05,
-            stockPrice,
-            ...snapshotInfo,
-          };
-          const profitInfo = getProfitInfo(stock);
-          Object.assign(stock, profitInfo);
-          return stock;
-        });
+    loadStockList(query) {
+      stockApi.findAllStocks({ query }).then(({ data }) => {
+        let list = data.map((record) => normalize(record));
         if (this.sortType === 'profit') {
           list = this.getListSortByProfit(list);
         } else if (this.sortType === 'percent') {
@@ -270,12 +261,17 @@ export default {
       });
     },
 
+    onSearch(query) {
+      this.loadStockList(query.trim());
+    },
+
     onDeleteClick(id, index) {
       stockApi
         .deleteStock(id)
         .then(() => {
           this.$message.success('Delete stock success');
           this.stockList.splice(index, 1);
+          this.toBackUpStockList();
         })
         .catch(() => {
           this.$message.success('Delete stock failed');
@@ -369,7 +365,8 @@ export default {
     },
 
     onAddStockSuccess(data) {
-      console.log(data);
+      this.stockList.unshift(...data.map((item) => normalize(item)));
+      this.toBackUpStockList();
     },
   },
 
@@ -380,23 +377,10 @@ export default {
         <div style={{ display: 'flex', alignItems: 'center', padding: '0.75rem' }}>
           <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
             <a-input-search
-              v-model={this.filterOptions.search}
-              placeholder="Quick search"
-              style={{ width: '12rem' }}
+              placeholder="Article Number / Product Name"
+              style={{ width: '16rem' }}
+              onSearch={this.onSearch}
             />
-
-            {/** product type filter */}
-            <a-radio-group
-              v-model={this.filterOptions.category}
-              size="small"
-              button-style="solid"
-              style={{ marginLeft: '0.5rem' }}
-            >
-              <a-radio-button value={null}>All</a-radio-button>
-              <a-radio-button value="AJ1">AJ1</a-radio-button>
-              <a-radio-button value="AF1">AF1</a-radio-button>
-              <a-radio-button value="Dunk">Dunk</a-radio-button>
-            </a-radio-group>
           </div>
 
           <a-button
@@ -438,7 +422,7 @@ export default {
         </div>
 
         <a-table
-          dataSource={this.renderedStockList}
+          dataSource={this.stockList}
           columns={this.columns}
           rowKey="id"
           pagination={false}

@@ -7,6 +7,7 @@ export default {
       params: {
         articleNumber,
       },
+      contentLoading: false,
     });
   },
 };

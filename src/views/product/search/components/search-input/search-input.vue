@@ -10,8 +10,6 @@ export default {
     },
   },
   data() {
-    this.name = name;
-
     return {};
   },
   methods: {
@@ -27,7 +25,8 @@ export default {
         <a-col span={8}>
           <a-input-search
             v-model={this.data.value}
-            placeholder="Article Number, Title and SPU ID supported"
+            allowClear
+            placeholder="Article Number / Product Name"
             onSearch={this.onSearch}
           />
         </a-col>
