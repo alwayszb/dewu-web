@@ -8,6 +8,7 @@ import Notice from '@/views/notice';
 import Calendar from '@/views/calendar';
 import { NotFound } from '@/views/error';
 import Stock from '@/views/stock';
+import Auth from '@/views/auth';
 
 Vue.use(VueRouter);
 
@@ -53,6 +54,11 @@ const routes = [
     component: Stock,
   },
   {
+    path: '/auth',
+    name: 'auth',
+    component: Auth,
+  },
+  {
     path: '*',
     redirect: {
       name: 'not-found',
@@ -64,6 +70,17 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const storedTime = localStorage.getItem('timestamp');
+  if (!storedTime && to.name !== 'auth') {
+    next({
+      name: 'auth',
+    });
+    return;
+  }
+  next();
 });
 
 export default router;

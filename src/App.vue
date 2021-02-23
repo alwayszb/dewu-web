@@ -1,6 +1,9 @@
 <template>
   <a-layout id="app">
-    <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%', height: '3rem' }">
+    <a-layout-header
+      v-if="hasAuthorized"
+      :style="{ position: 'fixed', zIndex: 1, width: '100%', height: '3rem' }"
+    >
       <a-menu
         v-model="selectedMenu"
         theme="dark"
@@ -45,6 +48,9 @@ export default {
   },
   computed: {
     ...mapGetters(['isLoading']),
+    hasAuthorized() {
+      return !!localStorage.getItem('timestamp');
+    },
   },
   mounted() {
     this.triggerSelectMenu();
