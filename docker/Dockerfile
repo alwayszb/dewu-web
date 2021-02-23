@@ -2,7 +2,7 @@
 FROM node:lts-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --registry=https://r.npm.taobao.org
 COPY . ./
 RUN npm run build
 
