@@ -5,6 +5,7 @@ import stockApi from './stock';
 import sellSnapshotApi from './sell-snapshot';
 import scheduleJobApi from './schedule-job';
 import captureApi from './capture';
+import salesRecordApi from './sales-record';
 
 export {
   //
@@ -15,4 +16,5 @@ export {
   sellSnapshotApi,
   scheduleJobApi,
   captureApi,
+  salesRecordApi,
 };

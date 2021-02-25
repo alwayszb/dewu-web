@@ -75,7 +75,7 @@ const getColumns = (vue) => {
     {
       dataIndex: 'product.articleNumber',
       title: 'Article Number',
-      width: 130,
+      width: 140,
       customRender: (value) => {
         return (
           <div>
@@ -195,7 +195,20 @@ const getColumns = (vue) => {
       customRender: (value, record, index) => {
         return (
           <div>
-            <a-button size="small" icon="stock" onClick={() => vue.onViewTrends(record, index)} />
+            <a-button
+              size="small"
+              icon="stock"
+              v-tooltip="View Trends"
+              onClick={() => vue.onViewTrends(record, index)}
+            />
+
+            <a-button
+              type="primary"
+              size="small"
+              icon="transaction"
+              v-tooltip="Set Sale"
+              onClick={() => vue.onSale(record, index)}
+            />
 
             <a-popconfirm
               title="Confirm to delete?"

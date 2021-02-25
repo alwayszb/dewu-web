@@ -38,7 +38,7 @@ export default {
       { title: 'Stock', key: 'stock', icon: 'appstore' },
       { title: 'Search', key: 'search', icon: 'search' },
       { title: 'Favorite', key: 'favorite', icon: 'star' },
-      { title: 'Task', key: 'task', icon: 'monitor' },
+      { title: 'Task', key: 'task', icon: 'schedule' },
       { title: 'Calendar', key: 'calendar', icon: 'calendar' },
     ];
 
