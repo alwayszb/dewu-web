@@ -2,6 +2,16 @@
 import { lodash, time } from '@/utils';
 const name = 'sale-form';
 
+const DEFAULT_FORM_DATA = {
+  soldPrice: null,
+  soldDate: time.now(),
+  pkgAndIdFee: 33,
+  expressFee: 13,
+  otherFee: 0,
+  serviceFeeRate: 0.05,
+  description: null,
+};
+
 export default {
   name,
 
@@ -15,13 +25,7 @@ export default {
   data() {
     return {
       formData: {
-        soldPrice: null,
-        soldDate: time.now(),
-        pkgAndIdFee: 33,
-        expressFee: 14,
-        otherFee: 0,
-        serviceFeeRate: 0.05,
-        description: null,
+        ...DEFAULT_FORM_DATA,
       },
     };
   },
@@ -68,6 +72,9 @@ export default {
       immediate: true,
       deep: true,
       handler(value) {
+        Object.assign(this.formData, {
+          ...DEFAULT_FORM_DATA,
+        });
         const { sellSnapshots } = value;
         const sellSnapshot = sellSnapshots[0];
         if (sellSnapshot) {

@@ -57,7 +57,7 @@ const getColumns = (vue) => {
         return (
           <img
             v-lazy={value}
-            alt={record.product.title}
+            alt={record.product.name}
             style={{ height: '53.75px', width: '84px' }}
           />
         );
@@ -133,7 +133,7 @@ const getColumns = (vue) => {
       title: 'Price Info',
       width: 240,
       customRender: (value, record) => {
-        if (!record.stockPrice || record.sellSnapshots.length === 0) {
+        if (!record.stockPrice || !record.sellSnapshots || record.sellSnapshots.length === 0) {
           return '-';
         }
 
