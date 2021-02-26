@@ -27,7 +27,7 @@ export default {
           <a-row gutter={8}>
             <a-col span={8}>
               <div v-viewer={{ navbar: false, toolbar: false }}>
-                <img class={`${name}-image`} v-lazy={image} alt={title} height="auto" width="80%" />
+                <img class={`${name}-image`} v-lazy={image} alt={title} height="74" width="115" />
               </div>
             </a-col>
             <a-col span={16}>

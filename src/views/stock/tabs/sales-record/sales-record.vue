@@ -40,7 +40,12 @@ export default {
             onClick={() => this.loadAllSalesRecords(this.searchValue)}
           />
         </div>
-        <a-table dataSource={this.salesRecordList} columns={this.columns} rowKey={rowKey}></a-table>
+        <a-table
+          dataSource={this.salesRecordList}
+          columns={this.columns}
+          rowKey={rowKey}
+          pagination={false}
+        />
       </div>
     );
   },

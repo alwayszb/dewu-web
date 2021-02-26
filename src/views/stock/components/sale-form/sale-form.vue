@@ -49,7 +49,9 @@ export default {
       return {
         profit,
         profitPercent,
-        serviceFee: totalServiceFee,
+        techServiceFee,
+        transferFee,
+        totalServiceFee,
       };
     },
   },
@@ -84,115 +86,155 @@ export default {
     },
   },
 
-  render() {
-    const { product, productSize, stockPrice, stockDate } = this.stock;
+  methods: {
+    renderProductDetail() {
+      const { product, productSize, stockPrice, stockDate } = this.stock;
 
+      return (
+        <a-row>
+          <a-col span={4}>
+            <img src={product.image} alt={product.name} height="56" />
+          </a-col>
+          <a-col span={20}>
+            <a-descriptions size="small" column={2} colon={false}>
+              <a-descriptions-item label="ARTICLE NUMBER">
+                <span style={{ fontWeight: 'bold' }}>{product.articleNumber}</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="STOCK DATE">
+                <span style={{ fontWeight: 'bold' }}>{time.formatToDate(stockDate)}</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="SIZE">
+                <span style={{ fontWeight: 'bold' }}>{productSize.size}</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="STOCK PRICE">
+                <span style={{ fontWeight: 'bold' }}>{stockPrice}</span>
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-col>
+        </a-row>
+      );
+    },
+
+    renderForm() {
+      return (
+        <a-row>
+          <a-col span={12}>
+            <a-form-model-item label="SOLD PRICE" required>
+              <a-input-number
+                v-model={this.formData.soldPrice}
+                min={0}
+                step={10}
+                style={{ width: '100%' }}
+              />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={12}>
+            <a-form-model-item label="SOLD DATE" required>
+              <a-date-picker v-model={this.formData.soldDate} style={{ width: '100%' }} />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={12}>
+            <a-form-model-item label="SFE" required>
+              <a-input-number
+                v-model={this.formData.serviceFeeRate}
+                style={{ width: '100%' }}
+                min={0}
+                max={100}
+                step={0.025}
+                formatter={(value) => (value ? `${value}%` : 0)}
+                parser={(value) => (value ? value.replace('%', '') : 0)}
+              />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={12}>
+            <a-form-model-item label="PKG/ID FEE" required>
+              <a-input-number
+                v-model={this.formData.pkgAndIdFee}
+                min={0}
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (!value & (value !== 0)) {
+                    this.formData.pkgAndIdFee = 0;
+                  }
+                }}
+              />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={12}>
+            <a-form-model-item label="EXPRESS FEE">
+              <a-input-number
+                v-model={this.formData.expressFee}
+                min={0}
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (!value & (value !== 0)) {
+                    this.formData.expressFee = 0;
+                  }
+                }}
+              />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={12}>
+            <a-form-model-item label="OTHER FEE">
+              <a-input-number
+                v-model={this.formData.otherFee}
+                min={0}
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (!value & (value !== 0)) {
+                    this.formData.otherFee = 0;
+                  }
+                }}
+              />
+            </a-form-model-item>
+          </a-col>
+
+          <a-col span={24}>
+            <a-form-item label="DESCRIPTION" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+              <a-textarea
+                v-model={this.formData.description}
+                autoSize={{ minRows: 1, maxRows: 2 }}
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      );
+    },
+
+    renderSummary() {
+      const { profit, techServiceFee, transferFee } = this.profitDetail || {};
+      const { soldPrice, pkgAndIdFee, expressFee, otherFee } = this.formData;
+      const { stockPrice } = this.stock;
+
+      return (
+        <div>
+          <a-statistic title="PROFIT" prefix="¥" value={profit} valueStyle={{ color: '#f5222d' }} />
+          <div style={{ color: '#ccc', fontSize: '90%' }}>
+            {`= ${soldPrice}(Sold) - ${techServiceFee}(Tech) - ${transferFee}(Transfer) - ${pkgAndIdFee}(Package/Identify) - ${expressFee}(Express) - ${otherFee}(Other) - ${stockPrice}(Stock)`}
+          </div>
+        </div>
+      );
+    },
+  },
+
+  render() {
     return (
       <div class={name}>
         <a-form-model labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={false}>
-          <a-descriptions size="small" column={2} colon={false}>
-            <a-descriptions-item>
-              <img src={product.image} alt={product.name} height="40" />
-            </a-descriptions-item>
-            <a-descriptions-item label="NAME">
-              <span style={{ fontWeight: 'bold' }}>{product.name}</span>
-            </a-descriptions-item>
-            <a-descriptions-item label="ARTICLE NUMBER">
-              <span style={{ fontWeight: 'bold' }}>{product.articleNumber}</span>
-            </a-descriptions-item>
-            <a-descriptions-item label="SIZE">
-              <span style={{ fontWeight: 'bold' }}>{productSize.size}</span>
-            </a-descriptions-item>
-            <a-descriptions-item label="STOCK DATE">
-              <span style={{ fontWeight: 'bold' }}>{time.formatToDate(stockDate)}</span>
-            </a-descriptions-item>
-            <a-descriptions-item label="STOCK PRICE">
-              <span style={{ fontWeight: 'bold' }}>{stockPrice}</span>
-            </a-descriptions-item>
-          </a-descriptions>
+          {this.renderProductDetail()}
 
           <a-divider />
 
-          <a-row>
-            <a-col span={12}>
-              <a-form-model-item label="SOLD PRICE" required>
-                <a-input-number
-                  v-model={this.formData.soldPrice}
-                  min={0}
-                  step={10}
-                  style={{ width: '100%' }}
-                />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={12}>
-              <a-form-model-item label="SOLD DATE" required>
-                <a-date-picker v-model={this.formData.soldDate} style={{ width: '100%' }} />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={12}>
-              <a-form-model-item label="SFE" required>
-                <a-input-number
-                  v-model={this.formData.serviceFeeRate}
-                  style={{ width: '100%' }}
-                  min={0}
-                  max={100}
-                  step={0.025}
-                  formatter={(value) => (value ? `${value}%` : 0)}
-                  parser={(value) => (value ? value.replace('%', '') : 0)}
-                />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={12}>
-              <a-form-model-item label="PKG/ID FEE" required>
-                <a-input-number
-                  v-model={this.formData.pkgAndIdFee}
-                  min={0}
-                  style={{ width: '100%' }}
-                />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={12}>
-              <a-form-model-item label="EXPRESS FEE">
-                <a-input-number
-                  v-model={this.formData.expressFee}
-                  min={0}
-                  style={{ width: '100%' }}
-                />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={12}>
-              <a-form-model-item label="OTHER FEE">
-                <a-input-number
-                  v-model={this.formData.otherFee}
-                  min={0}
-                  style={{ width: '100%' }}
-                />
-              </a-form-model-item>
-            </a-col>
-
-            <a-col span={24}>
-              <a-form-item label="DESCRIPTION" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-                <a-textarea
-                  v-model={this.formData.description}
-                  autoSize={{ minRows: 1, maxRows: 2 }}
-                />
-              </a-form-item>
-            </a-col>
-          </a-row>
+          {this.renderForm()}
 
           <a-divider />
 
-          <a-statistic
-            title="PROFIT"
-            prefix="¥"
-            value={this.profitDetail ? this.profitDetail.profit : ''}
-            valueStyle={{ color: '#f5222d' }}
-          />
+          {this.renderSummary()}
         </a-form-model>
       </div>
     );

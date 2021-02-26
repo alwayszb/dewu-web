@@ -173,7 +173,7 @@ export default {
       this.saleFormSubmitLoading = true;
       const {
         value: { soldPrice, soldDate, expressFee, otherFee, description },
-        profitDetail: { serviceFee, profit },
+        profitDetail: { totalServiceFee, profit },
       } = this.saleFormData;
       const salesRecord = {
         stockId: this.actionStock.id,
@@ -182,7 +182,7 @@ export default {
         expressFee,
         otherFee,
         description,
-        serviceFee,
+        serviceFee: totalServiceFee,
         profit,
       };
       salesRecordApi
@@ -274,25 +274,27 @@ export default {
         {/** add stock modal */}
         <AddStock v-model={this.addStockModalVisible} onSuccess={this.onAddStockSuccess} />
 
-        <a-modal
-          v-model={this.saleModalVisible}
-          title="SALE FORM"
-          width={800}
-          centered
-          okText="SUBMIT"
-          cancelText="CLOSE"
-          confirmLoading={this.saleFormSubmitLoading}
-          onOk={this.onSaleFormSubmit}
-        >
-          <a-spin spinning={this.saleFormSubmitLoading}>
-            {!lodash.isEmpty(this.actionStock) && (
-              <SaleForm
-                stock={this.actionStock}
-                onChange={(value, profitDetail) => (this.saleFormData = { value, profitDetail })}
-              />
-            )}
-          </a-spin>
-        </a-modal>
+        {!lodash.isEmpty(this.actionStock) && (
+          <a-modal
+            v-model={this.saleModalVisible}
+            title={`SALE FORM - ${this.actionStock.product.name}`}
+            width={800}
+            centered
+            okText="SUBMIT"
+            cancelText="CLOSE"
+            confirmLoading={this.saleFormSubmitLoading}
+            onOk={this.onSaleFormSubmit}
+          >
+            <a-spin spinning={this.saleFormSubmitLoading}>
+              {!lodash.isEmpty(this.actionStock) && (
+                <SaleForm
+                  stock={this.actionStock}
+                  onChange={(value, profitDetail) => (this.saleFormData = { value, profitDetail })}
+                />
+              )}
+            </a-spin>
+          </a-modal>
+        )}
       </div>
     );
   },
