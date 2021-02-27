@@ -2,21 +2,22 @@ const getColumns = (vue) => {
   // eslint-disable-next-line no-unused-vars
   const { $createElement: h } = vue;
 
-  return [
-    {
-      dataIndex: 'stock.product.image',
-      title: 'Product',
-      width: 100,
-      customRender: (value, record) => {
-        return (
-          <img
-            v-lazy={value}
-            alt={record.stock.product.title}
-            style={{ height: '53.75px', width: '84px' }}
-          />
-        );
-      },
+  const imageColumn = {
+    dataIndex: 'stock.product.image',
+    title: 'Product',
+    width: 100,
+    customRender: (value, record) => {
+      return (
+        <img
+          v-lazy={value}
+          alt={record.stock.product.name}
+          style={{ height: '53.75px', width: '84px' }}
+        />
+      );
     },
+  };
+
+  const columns = [
     {
       dataIndex: 'stock.product.name',
       title: 'Name',
@@ -81,6 +82,12 @@ const getColumns = (vue) => {
       width: 120,
     },
   ];
+
+  if (vue.showImage) {
+    columns.unshift(imageColumn);
+  }
+
+  return columns;
 };
 
 export {

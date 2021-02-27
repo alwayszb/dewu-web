@@ -15,6 +15,13 @@ const name = 'in-stock';
 export default {
   name,
 
+  props: {
+    showImage: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   created() {
     this.loadStockList();
   },
@@ -33,6 +40,15 @@ export default {
       saleFormSubmitLoading: false,
       searchValue: '',
     };
+  },
+
+  watch: {
+    showImage: {
+      immediate: true,
+      handler() {
+        this.columns = getColumns(this);
+      },
+    },
   },
 
   methods: {

@@ -48,21 +48,22 @@ const normalize = (data) => {
 const getColumns = (vue) => {
   // eslint-disable-next-line no-unused-vars
   const h = vue.$createElement;
-  return [
-    {
-      dataIndex: 'product.image',
-      title: 'Product',
-      width: 100,
-      customRender: (value, record) => {
-        return (
-          <img
-            v-lazy={value}
-            alt={record.product.name}
-            style={{ height: '53.75px', width: '84px' }}
-          />
-        );
-      },
+  const imageColumn = {
+    dataIndex: 'product.image',
+    title: 'Product',
+    width: 100,
+    customRender: (value, record) => {
+      return (
+        <img
+          v-lazy={value}
+          alt={record.product.name}
+          style={{ height: '53.75px', width: '84px' }}
+        />
+      );
     },
+  };
+
+  const columns = [
     {
       dataIndex: 'product.name',
       title: 'Name',
@@ -221,6 +222,12 @@ const getColumns = (vue) => {
       },
     },
   ];
+
+  if (vue.showImage) {
+    columns.unshift(imageColumn);
+  }
+
+  return columns;
 };
 
 const SORT_TYPES = {

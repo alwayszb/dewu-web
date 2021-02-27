@@ -8,6 +8,14 @@ const rowKey = 'id';
 
 export default {
   name,
+
+  props: {
+    showImage: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   data() {
     return {
       columns: getColumns(this),
@@ -15,9 +23,20 @@ export default {
       searchValue: '',
     };
   },
+
   created() {
     this.loadAllSalesRecords();
   },
+
+  watch: {
+    showImage: {
+      immediate: true,
+      handler() {
+        this.columns = getColumns(this);
+      },
+    },
+  },
+
   methods: {
     loadAllSalesRecords() {
       salesRecordApi.findAllSalesRecords().then(({ data }) => {
@@ -25,6 +44,7 @@ export default {
       });
     },
   },
+
   render() {
     return (
       <div class={name}>

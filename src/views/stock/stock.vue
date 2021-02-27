@@ -28,6 +28,7 @@ export default {
 
   data() {
     return {
+      showImage: localStorage.getItem('showImage') === 'true',
       selectedTab: TABS.IN_STOCK.key,
     };
   },
@@ -36,8 +37,8 @@ export default {
 
   render() {
     const tabContent = {
-      [TABS.IN_STOCK.key]: <InStock />,
-      [TABS.SALES_RECORD.key]: <SalesRecord />,
+      [TABS.IN_STOCK.key]: <InStock showImage={this.showImage} />,
+      [TABS.SALES_RECORD.key]: <SalesRecord showImage={this.showImage} />,
     };
 
     return (
@@ -47,6 +48,24 @@ export default {
             {tabContent[key]}
           </a-tab-pane>
         ))}
+        <template slot="tabBarExtraContent">
+          <a-switch
+            v-model={this.showImage}
+            style={{ margin: '0 0.5rem' }}
+            onChange={(checked) => {
+              localStorage.setItem('showImage', checked);
+            }}
+          >
+            <template slot="checkedChildren">
+              <span>IMAGE </span>
+              <a-icon type="check" />
+            </template>
+            <template slot="unCheckedChildren">
+              <span>IMAGE </span>
+              <a-icon type="close" />
+            </template>
+          </a-switch>
+        </template>
       </a-tabs>
     );
   },

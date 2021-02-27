@@ -100,7 +100,6 @@ export default {
       });
     },
     onViewTrends(record) {
-      console.log(record);
       this.actionRecord = record;
       this.trendsModalVisible = true;
     },
