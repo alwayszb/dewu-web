@@ -24,10 +24,10 @@ export default {
     return (
       <div class={name}>
         <div class={`${name}-header`}>
-          <a-row gutter={8}>
+          <a-row gutter={16}>
             <a-col span={8}>
               <div v-viewer={{ navbar: false, toolbar: false }}>
-                <img class={`${name}-image`} v-lazy={image} alt={title} height="74" width="115" />
+                <img class={`${name}-image`} v-lazy={image} alt={title} />
               </div>
             </a-col>
             <a-col span={16}>
