@@ -87,20 +87,13 @@ export default {
         });
     },
 
-    updateStock(record, stockPrice, index) {
-      const originStock = this.backupStockList[index];
-
-      if (stockPrice === originStock.stockPrice && record.stockDate === originStock.stockDate) {
-        record.editing = false;
-        return;
-      }
-
+    updateStock(record, updateProps, index, originStock) {
       return stockApi
-        .updateStock(record.id, { ...record, stockPrice })
+        .updateStock(record.id, { ...record, ...updateProps })
         .then(() => {
           this.$message.success('Update stock success');
-          const profitInfo = getProfitInfo({ ...record, stockPrice });
-          Object.assign(record, { ...profitInfo, stockPrice, editing: false });
+          const profitInfo = getProfitInfo({ ...record, ...updateProps });
+          Object.assign(record, { ...profitInfo, ...updateProps, editing: false });
           Object.assign(this.stockList[index], record);
           this.toBackUpStockList();
         })
@@ -108,6 +101,17 @@ export default {
           Object.assign(record, originStock);
           this.$message.success('Update stock failed');
         });
+    },
+
+    updateStockPrice(record, stockPrice, index) {
+      const originStock = this.backupStockList[index];
+
+      if (stockPrice === originStock.stockPrice) {
+        record.editing = false;
+        return;
+      }
+
+      return this.updateStock(record, { stockPrice }, index, originStock);
     },
 
     getListSortByProfit(list) {
@@ -210,6 +214,20 @@ export default {
           this.toBackUpStockList();
         })
         .finally(() => (this.saleFormSubmitLoading = false));
+    },
+
+    onExpectPriceChange(record, price, index) {
+      const originStock = this.backupStockList[index];
+      const expectPrice = price ? parseInt(price, 10) : 0;
+      if (expectPrice === (originStock.expectPrice || 0)) {
+        return;
+      }
+      return this.updateStock(
+        record,
+        { expectPrice: parseInt(expectPrice, 10) },
+        index,
+        originStock,
+      );
     },
   },
 

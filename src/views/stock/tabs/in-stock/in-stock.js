@@ -109,7 +109,7 @@ const getColumns = (vue) => {
             style={{ width: '6rem' }}
             onBlur={(e) => {
               const stockPrice = parseInt(e.target.value || 0, 10);
-              vue.updateStock(record, stockPrice, index);
+              vue.updateStockPrice(record, stockPrice, index);
             }}
             onPressEnter={() => {
               vue.$refs[`stockPrice-${index}`].blur();
@@ -185,6 +185,20 @@ const getColumns = (vue) => {
                 ...getProfitInfo({ ...record, serviceFeeRate }),
                 serviceFeeRate,
               });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: 'ExP',
+      width: 160,
+      customRender: (value, record, index) => {
+        return (
+          <inline-edit
+            value={record.expectPrice}
+            onBlur={(expectPrice) => {
+              vue.onExpectPriceChange(record, expectPrice, index);
             }}
           />
         );
