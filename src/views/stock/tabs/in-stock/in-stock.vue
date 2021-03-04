@@ -8,7 +8,7 @@ import { lodash } from '@/utils';
 import AddStock from '@/views/stock/components/add-stock';
 import StockSummary from '@/views/stock/components/stock-summary';
 import SaleForm from '@/views/stock/components/sale-form';
-import { getProfitInfo, normalize, getColumns, SORT_TYPES } from './in-stock';
+import { normalize, getColumns, SORT_TYPES } from './in-stock';
 
 const name = 'in-stock';
 
@@ -82,24 +82,23 @@ export default {
           this.stockList.splice(index, 1);
           this.toBackUpStockList();
         })
-        .catch(() => {
-          this.$message.success('Delete stock failed');
+        .catch((error) => {
+          this.$message.error('Delete stock failed:', error);
         });
     },
 
     updateStock(record, updateProps, index, originStock) {
       return stockApi
         .updateStock(record.id, { ...record, ...updateProps })
-        .then(() => {
+        .then(({ data }) => {
           this.$message.success('Update stock success');
-          const profitInfo = getProfitInfo({ ...record, ...updateProps });
-          Object.assign(record, { ...profitInfo, ...updateProps, editing: false });
-          Object.assign(this.stockList[index], record);
+          const stock = normalize(data);
+          Object.assign(record, stock);
           this.toBackUpStockList();
         })
-        .catch(() => {
+        .catch((error) => {
           Object.assign(record, originStock);
-          this.$message.success('Update stock failed');
+          this.$message.error('Update stock failed:', error);
         });
     },
 
@@ -216,15 +215,15 @@ export default {
         .finally(() => (this.saleFormSubmitLoading = false));
     },
 
-    onExpectPriceChange(record, price, index) {
+    onExpectedPriceChange(record, price, index) {
       const originStock = this.backupStockList[index];
-      const expectPrice = price ? parseInt(price, 10) : 0;
-      if (expectPrice === (originStock.expectPrice || 0)) {
+      const expectedPrice = price ? parseInt(price, 10) : 0;
+      if (expectedPrice === (originStock.expectedPrice || 0)) {
         return;
       }
       return this.updateStock(
         record,
-        { expectPrice: parseInt(expectPrice, 10) },
+        { expectedPrice: parseInt(expectedPrice, 10) },
         index,
         originStock,
       );

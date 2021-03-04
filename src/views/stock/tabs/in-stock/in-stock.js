@@ -1,14 +1,10 @@
 import { time, lodash } from '@/utils';
 
-const getProfitInfo = (stock) => {
-  const { stockPrice, snapshotPrice, serviceFeeRate } = stock;
-  if (!stockPrice) {
-    return {};
-  }
-  const techServiceFee = lodash.round(snapshotPrice * serviceFeeRate, 2);
-  const transferFee = lodash.round(snapshotPrice * 0.01, 2);
+const calcProfit = ({ sellPrice, serviceFeeRate, stockPrice }) => {
+  const techServiceFee = lodash.round(sellPrice * serviceFeeRate, 2);
+  const transferFee = lodash.round(sellPrice * 0.01, 2);
   const serviceFee = lodash.round(techServiceFee + transferFee + 33, 2); // 打包费+鉴别费=33
-  const salesRevenue = lodash.round(snapshotPrice - serviceFee, 2);
+  const salesRevenue = lodash.round(sellPrice - serviceFee, 2);
   const profit = lodash.round(salesRevenue - stockPrice, 2);
   const profitPercent = lodash.round((profit / stockPrice) * 100, 2);
   return {
@@ -18,6 +14,19 @@ const getProfitInfo = (stock) => {
     profit, // 利润
     profitPercent, // 利润百分比
   };
+};
+
+const getProfitInfo = (stock) => {
+  const { stockPrice, snapshotPrice, serviceFeeRate } = stock;
+  if (!stockPrice) {
+    return {};
+  }
+
+  return calcProfit({
+    sellPrice: snapshotPrice,
+    serviceFeeRate,
+    stockPrice,
+  });
 };
 
 const normalize = (data) => {
@@ -173,34 +182,33 @@ const getColumns = (vue) => {
       },
     },
     {
-      title: 'SFR',
-      customRender: (value, record) => {
-        return (
-          <a-input-number
-            value={record.serviceFeeRate}
-            style={{ width: '4.375rem' }}
-            onBlur={(e) => {
-              const serviceFeeRate = parseFloat(e.target.value || 0.05);
-              Object.assign(record, {
-                ...getProfitInfo({ ...record, serviceFeeRate }),
-                serviceFeeRate,
-              });
-            }}
-          />
-        );
-      },
-    },
-    {
       title: 'ExP',
-      width: 160,
+      width: 100,
       customRender: (value, record, index) => {
+        const profitInfo = record.expectedPrice
+          ? calcProfit({
+              sellPrice: record.expectedPrice,
+              serviceFeeRate: 0.05,
+              stockPrice: record.stockPrice,
+            })
+          : null;
+
         return (
-          <inline-edit
-            value={record.expectPrice}
-            onBlur={(expectPrice) => {
-              vue.onExpectPriceChange(record, expectPrice, index);
-            }}
-          />
+          <div
+            style={{ display: 'flex', alignItems: 'center' }}
+            v-tooltip={
+              profitInfo ? `ExP Profit: ${profitInfo.profit} (${profitInfo.profitPercent}%)` : null
+            }
+          >
+            <inline-edit
+              value={record.expectedPrice}
+              onBlur={(expectedPrice) => {
+                vue.onExpectedPriceChange(record, expectedPrice, index);
+              }}
+            >
+              <div slot="suffix">{record.noticed && <a-icon type="wechat" />}</div>
+            </inline-edit>
+          </div>
         );
       },
     },
