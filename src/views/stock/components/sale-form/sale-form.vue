@@ -212,13 +212,27 @@ export default {
       const { stockPrice } = this.stock;
 
       return (
-        <div>
-          <a-statistic title="PROFIT" prefix="¥" value={profit} valueStyle={{ color: '#f5222d' }} />
-          <div style={{ color: '#ccc', fontSize: '90%' }}>
-            {`= ${soldPrice}(Sold) - ${techServiceFee}(Tech) - ${transferFee}(Transfer) - ${pkgAndIdFee}(Package/Identify) - ${expressFee}(Express) - ${otherFee}(Other) - ${stockPrice}(Stock)`}
-          </div>
+        <div style={{ color: '#ccc', fontSize: '90%', textAlign: 'center' }}>
+          {`${soldPrice}(Sold) - ${techServiceFee}(Tech) - ${transferFee}(Transfer) - ${pkgAndIdFee}(Pkg/Id) - ${expressFee}(Express) - ${otherFee}(Other) - ${stockPrice}(Stock) = ${profit}`}
         </div>
       );
+    },
+
+    renderProfit() {
+      const { profit } = this.profitDetail || {};
+      return (
+        <a-statistic
+          title="PROFIT"
+          prefix="¥"
+          value={profit}
+          valueStyle={{ color: '#f5222d' }}
+          style={{ textAlign: 'right' }}
+        />
+      );
+    },
+
+    renderDivider() {
+      return <a-divider style={{ margin: '0.75rem 0' }} />;
     },
   },
 
@@ -228,13 +242,17 @@ export default {
         <a-form-model labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={false}>
           {this.renderProductDetail()}
 
-          <a-divider />
+          {this.renderDivider()}
 
           {this.renderForm()}
 
-          <a-divider />
+          {this.renderDivider()}
 
           {this.renderSummary()}
+
+          {this.renderDivider()}
+
+          {this.renderProfit()}
         </a-form-model>
       </div>
     );
