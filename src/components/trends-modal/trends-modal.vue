@@ -5,7 +5,7 @@
 </style>
 
 <script>
-import { productSizeApi, sellSnapshotApi } from '@/api';
+import { captureApi, productSizeApi, sellSnapshotApi } from '@/api';
 
 const name = 'trends-modal';
 const TABS = {
@@ -98,6 +98,20 @@ export default {
       const sellSnapshot = this.sellSnapshots.find((item) => skuId === item.skuId);
       return sellSnapshot && sellSnapshot.sellItem ? sellSnapshot.sellItem.price / 100 : null;
     },
+    onSyncClick() {
+      captureApi
+        .capturePurchaseRecords({
+          articleNumber: this.articleNumber,
+          captureAll: false,
+          contentLoading: false,
+        })
+        .then(() => {
+          this.$message.success('Sync job started');
+        })
+        .catch(() => {
+          this.$message.error('Call sync job failed');
+        });
+    },
     renderModalTitle() {
       return (
         <div slot="title">
@@ -107,23 +121,35 @@ export default {
     },
     renderSizeOptions() {
       return (
-        <a-radio-group
-          v-model={this.selectedSize}
-          size="small"
-          button-style="solid"
-          style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}
-        >
-          {this.productSizes.map(({ size, skuId }) => (
-            <a-radio-button value={size}>
-              <div style={{ textAlign: 'center' }}>
-                <div>{size}</div>
-                <div style={{ color: '#ccc', fontSize: '90%', borderTop: '1px solid #ccc' }}>
-                  {this.getPriceBySkuId(skuId) || '-'}
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '1rem' }}>
+          <a-radio-group
+            v-model={this.selectedSize}
+            slot="extra"
+            size="small"
+            button-style="solid"
+            style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+          >
+            {this.productSizes.map(({ size, skuId }) => (
+              <a-radio-button value={size}>
+                <div style={{ textAlign: 'center' }}>
+                  <div>{size}</div>
+                  <div style={{ color: '#ccc', fontSize: '90%', borderTop: '1px solid #f5f5f5' }}>
+                    {this.getPriceBySkuId(skuId) || '-'}
+                  </div>
                 </div>
-              </div>
-            </a-radio-button>
-          ))}
-        </a-radio-group>
+              </a-radio-button>
+            ))}
+          </a-radio-group>
+          <a-button
+            type="primary"
+            size="small"
+            icon="sync"
+            style={{ marginRight: '1rem' }}
+            onClick={this.onSyncClick}
+          >
+            Sync Records
+          </a-button>
+        </div>
       );
     },
     renderTrends() {

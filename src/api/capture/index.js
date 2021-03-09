@@ -1,13 +1,14 @@
 import request from '@/request';
 
 export default {
-  capturePurchaseRecords({ articleNumber, captureAll = false }) {
+  capturePurchaseRecords({ articleNumber, captureAll = false, contentLoading }) {
     const url = '/capture/capture-sold-list';
     return request.get(url, {
       params: {
         articleNumber,
         captureAll,
       },
+      contentLoading,
     });
   },
 
