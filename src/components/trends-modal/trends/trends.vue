@@ -18,7 +18,6 @@ export default {
     },
   },
   data() {
-    this.name = name;
     this.extend = {
       series: {
         label: {

@@ -5,8 +5,7 @@
 </style>
 
 <script>
-import { productSizeApi, purchaseRecordApi, sellSnapshotApi } from '@/api';
-import { time } from '@/utils';
+import { productSizeApi, sellSnapshotApi } from '@/api';
 
 const name = 'trends-modal';
 const TABS = {
@@ -46,16 +45,7 @@ export default {
       productSizes: [],
       sellSnapshots: [],
       selectedSize: null,
-      columns: [
-        { dataIndex: 'articleNumber', title: 'Article Number' },
-        { dataIndex: 'purchaser', title: 'Purchaser' },
-        { dataIndex: 'size', title: 'Size' },
-        { dataIndex: 'price', title: 'Price', customRender: (value) => value / 100 },
-        { dataIndex: 'orderSubTypeName', title: 'Type', customRender: (value) => value || '-' },
-      ],
-      dataSource: [],
       selectedTab: TABS.TRENDS.key,
-      tableLoading: false,
     };
   },
   watch: {
@@ -93,6 +83,7 @@ export default {
     },
     onOpen() {
       this.selectedSize = this.size;
+      this.selectedTab = TABS.TRENDS.key;
       this.loadProductSizes();
       this.loadSellSnapshots();
       this.$emit('input', true);
@@ -120,18 +111,13 @@ export default {
           v-model={this.selectedSize}
           size="small"
           button-style="solid"
-          style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}
-          onChange={() => {
-            if (this.selectedTab === TABS.RECORDS.key) {
-              this.loadPurchaseRecords();
-            }
-          }}
+          style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}
         >
           {this.productSizes.map(({ size, skuId }) => (
             <a-radio-button value={size}>
               <div style={{ textAlign: 'center' }}>
                 <div>{size}</div>
-                <div style={{ color: '#ccc', fontSize: '90%', borderTop: '1px solid #f5f5f5' }}>
+                <div style={{ color: '#ccc', fontSize: '90%', borderTop: '1px solid #ccc' }}>
                   {this.getPriceBySkuId(skuId) || '-'}
                 </div>
               </div>
@@ -154,23 +140,12 @@ export default {
         </div>
       );
     },
-    loadPurchaseRecords() {
-      this.tableLoading = true;
-      this.dataSource = [];
-      purchaseRecordApi
-        .findPurchaseRecordsByProduct({
-          articleNumber: this.articleNumber,
-          size: this.selectedSize,
-          date: time.formatToDate(),
-          overseas: true,
-          demand: true,
-        })
-        .then(({ data }) => {
-          this.dataSource = data;
-        })
-        .finally(() => {
-          this.tableLoading = false;
-        });
+    renderPurchaseRecordTable() {
+      return (
+        this.selectedTab === TABS.RECORDS.key && (
+          <purchase-record articleNumber={this.articleNumber} size={this.selectedSize} />
+        )
+      );
     },
   },
   render() {
@@ -184,38 +159,16 @@ export default {
         destroyOnClose
       >
         {this.renderModalTitle()}
-        <a-tabs
-          v-model={this.selectedTab}
-          animated={false}
-          onChange={(key) => {
-            if (key === TABS.RECORDS.key && this.selectedSize) {
-              this.loadPurchaseRecords();
-            }
-          }}
-        >
+        {this.renderSizeOptions()}
+        <a-tabs v-model={this.selectedTab} animated={false}>
           <a-tab-pane tab={TABS.TRENDS.name} key={TABS.TRENDS.key}>
-            {this.renderSizeOptions()}
             {this.renderTrends()}
-            {this.renderFooter()}
           </a-tab-pane>
           <a-tab-pane tab={TABS.RECORDS.name} key={TABS.RECORDS.key}>
-            {this.renderSizeOptions()}
-            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-              <a-tag>Total: {this.dataSource.length}</a-tag>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <a-table
-                dataSource={this.dataSource}
-                columns={this.columns}
-                rowKey="id"
-                pagination={false}
-                scroll={{ y: 500 }}
-                loading={this.tableLoading}
-                style={{ width: '68%' }}
-              />
-            </div>
+            {this.renderPurchaseRecordTable()}
           </a-tab-pane>
         </a-tabs>
+        {this.renderFooter()}
       </a-modal>
     );
   },
