@@ -5,8 +5,20 @@
 </style>
 
 <script>
-import { productSizeApi, sellSnapshotApi } from '@/api';
+import { productSizeApi, purchaseRecordApi, sellSnapshotApi } from '@/api';
+import { time } from '@/utils';
+
 const name = 'trends-modal';
+const TABS = {
+  TRENDS: {
+    name: 'Trends',
+    key: 'TRENDS',
+  },
+  RECORDS: {
+    name: 'Records',
+    key: 'RECORDS',
+  },
+};
 
 export default {
   name,
@@ -34,6 +46,16 @@ export default {
       productSizes: [],
       sellSnapshots: [],
       selectedSize: null,
+      columns: [
+        { dataIndex: 'articleNumber', title: 'Article Number' },
+        { dataIndex: 'purchaser', title: 'Purchaser' },
+        { dataIndex: 'size', title: 'Size' },
+        { dataIndex: 'price', title: 'Price', customRender: (value) => value / 100 },
+        { dataIndex: 'orderSubTypeName', title: 'Type', customRender: (value) => value || '-' },
+      ],
+      dataSource: [],
+      selectedTab: TABS.TRENDS.key,
+      tableLoading: false,
     };
   },
   watch: {
@@ -99,6 +121,11 @@ export default {
           size="small"
           button-style="solid"
           style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}
+          onChange={() => {
+            if (this.selectedTab === TABS.RECORDS.key) {
+              this.loadPurchaseRecords();
+            }
+          }}
         >
           {this.productSizes.map(({ size, skuId }) => (
             <a-radio-button value={size}>
@@ -114,7 +141,11 @@ export default {
       );
     },
     renderTrends() {
-      return <trends articleNumber={this.articleNumber} size={this.selectedSize} />;
+      return (
+        this.selectedTab === TABS.TRENDS.key && (
+          <trends articleNumber={this.articleNumber} size={this.selectedSize} />
+        )
+      );
     },
     renderFooter() {
       return (
@@ -123,14 +154,68 @@ export default {
         </div>
       );
     },
+    loadPurchaseRecords() {
+      this.tableLoading = true;
+      this.dataSource = [];
+      purchaseRecordApi
+        .findPurchaseRecordsByProduct({
+          articleNumber: this.articleNumber,
+          size: this.selectedSize,
+          date: time.formatToDate(),
+          overseas: true,
+          demand: true,
+        })
+        .then(({ data }) => {
+          this.dataSource = data;
+        })
+        .finally(() => {
+          this.tableLoading = false;
+        });
+    },
   },
   render() {
     return (
-      <a-modal v-model={this.visible} width="80%" centered hasDivider destroyOnClose>
+      <a-modal
+        v-model={this.visible}
+        width="100%"
+        bodyStyle={{ padding: 0 }}
+        dialogStyle={{ top: 0 }}
+        hasDivider
+        destroyOnClose
+      >
         {this.renderModalTitle()}
-        {this.renderSizeOptions()}
-        {this.renderTrends()}
-        {this.renderFooter()}
+        <a-tabs
+          v-model={this.selectedTab}
+          animated={false}
+          onChange={(key) => {
+            if (key === TABS.RECORDS.key && this.selectedSize) {
+              this.loadPurchaseRecords();
+            }
+          }}
+        >
+          <a-tab-pane tab={TABS.TRENDS.name} key={TABS.TRENDS.key}>
+            {this.renderSizeOptions()}
+            {this.renderTrends()}
+            {this.renderFooter()}
+          </a-tab-pane>
+          <a-tab-pane tab={TABS.RECORDS.name} key={TABS.RECORDS.key}>
+            {this.renderSizeOptions()}
+            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+              <a-tag>Total: {this.dataSource.length}</a-tag>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <a-table
+                dataSource={this.dataSource}
+                columns={this.columns}
+                rowKey="id"
+                pagination={false}
+                scroll={{ y: 500 }}
+                loading={this.tableLoading}
+                style={{ width: '68%' }}
+              />
+            </div>
+          </a-tab-pane>
+        </a-tabs>
       </a-modal>
     );
   },
