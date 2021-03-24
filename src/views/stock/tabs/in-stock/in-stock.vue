@@ -5,7 +5,6 @@
 <script>
 import { salesRecordApi, stockApi } from '@/api';
 import { lodash } from '@/utils';
-import AddStock from '@/views/stock/components/add-stock';
 import StockSummary from '@/views/stock/components/stock-summary';
 import SaleForm from '@/views/stock/components/sale-form';
 import { normalize, getColumns, SORT_TYPES } from './in-stock';
@@ -305,7 +304,18 @@ export default {
         )}
 
         {/** add stock modal */}
-        <AddStock v-model={this.addStockModalVisible} onSuccess={this.onAddStockSuccess} />
+        <product-select
+          v-model={this.addStockModalVisible}
+          submit={(stock) => {
+            return stockApi
+              .createStock(
+                { ...stock, stockDate: new Date(), stockPrice: 0 },
+                { contentLoading: false },
+              )
+              .then(({ data }) => data);
+          }}
+          onSuccess={this.onAddStockSuccess}
+        />
 
         {!lodash.isEmpty(this.actionStock) && (
           <a-modal

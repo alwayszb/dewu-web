@@ -30,7 +30,7 @@ export default {
       loading: false,
       dataEmpty: true,
       chartData: {
-        columns: ['purchaseDate', 'min'],
+        columns: ['purchaseDate', 'min', 'max'],
         rows: [],
       },
       chartSettings: {

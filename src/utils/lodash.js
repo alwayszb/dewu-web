@@ -9,6 +9,7 @@ import flatMap from 'lodash/flatMap';
 import round from 'lodash/round';
 import cloneDeep from 'lodash/cloneDeep';
 import sumBy from 'lodash/sumBy';
+import debounce from 'lodash/debounce';
 
 export default {
   orderBy,
@@ -21,4 +22,5 @@ export default {
   round,
   cloneDeep,
   sumBy,
+  debounce,
 };

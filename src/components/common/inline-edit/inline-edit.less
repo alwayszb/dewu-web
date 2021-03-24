@@ -1,6 +1,6 @@
-@ray-name: inline-edit;
+@name: inline-edit;
 
-.@{ray-name} {
+.@{name} {
   position: relative;
   display: inline-block;
   width: 100%;
@@ -30,7 +30,7 @@
 
     font-size: @sm-font-size;
 
-    .@{ray-name}-text {
+    .@{name}-text {
       padding: @sm-padding;
       min-height: @sm-min-height;
     }
@@ -41,7 +41,7 @@
       min-height: @sm-min-height;
     }
 
-    .@{ray-name}-placeholder {
+    .@{name}-placeholder {
       padding: @sm-padding;
       height: calc(@sm-min-height + 2px);
     }
@@ -54,14 +54,14 @@
   }
 
   &&--input {
-    .@{ray-name}-text {
+    .@{name}-text {
       word-break: normal;
       white-space: nowrap;
     }
   }
 
   &&--textarea {
-    .@{ray-name}-text {
+    .@{name}-text {
       word-break: break-word;
       white-space: pre-wrap;
     }

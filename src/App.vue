@@ -1,3 +1,10 @@
+<style lang="less">
+.ant-spin-nested-loading,
+.ant-spin-container {
+  height: 100%;
+}
+</style>
+
 <template>
   <a-layout id="app">
     <a-layout-header
@@ -17,7 +24,7 @@
         </a-menu-item>
       </a-menu>
     </a-layout-header>
-    <a-layout-content :style="{ marginTop: '3rem', overflow: 'auto' }">
+    <a-layout-content :style="{ marginTop: '3rem', height: '100vh', overflow: 'auto' }">
       <a-spin :spinning="isLoading">
         <keep-alive>
           <router-view class="animate__animated animate__fadeIn" />
@@ -37,6 +44,7 @@ export default {
       { title: 'Home', key: 'home', icon: 'home' },
       { title: 'Stock', key: 'stock', icon: 'appstore' },
       { title: 'Search', key: 'search', icon: 'search' },
+      { title: 'Monitor', key: 'monitor', icon: 'monitor' },
       { title: 'Favorite', key: 'favorite', icon: 'star' },
       { title: 'Task', key: 'task', icon: 'schedule' },
       { title: 'Calendar', key: 'calendar', icon: 'calendar' },

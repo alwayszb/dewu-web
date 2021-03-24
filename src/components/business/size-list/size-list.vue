@@ -1,6 +1,6 @@
 <script>
 import { productSizeApi } from '@/api';
-const name = 'stock-form';
+const name = 'size-list';
 
 export default {
   name,
@@ -56,7 +56,7 @@ export default {
       );
     },
 
-    exportStocks() {
+    exportData() {
       return this.stocks;
     },
   },

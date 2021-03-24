@@ -9,6 +9,7 @@ import Calendar from '@/views/calendar';
 import { NotFound } from '@/views/error';
 import Stock from '@/views/stock';
 import Auth from '@/views/auth';
+import Monitor from '@/views/monitor';
 
 Vue.use(VueRouter);
 
@@ -57,6 +58,11 @@ const routes = [
     path: '/auth',
     name: 'auth',
     component: Auth,
+  },
+  {
+    path: '/monitor',
+    name: 'monitor',
+    component: Monitor,
   },
   {
     path: '*',

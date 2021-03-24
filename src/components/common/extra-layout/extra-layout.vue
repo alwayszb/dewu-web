@@ -4,20 +4,20 @@
 
 <template>
   <div :class="classes">
-    <div :class="`${rayName}-main`" :style="mainStyles">
+    <div :class="`${name}-main`" :style="mainStyles">
       <slot />
     </div>
-    <div :class="`${rayName}-extra`" :style="extraStyles">
+    <div :class="`${name}-extra`" :style="extraStyles">
       <slot name="extra" />
     </div>
   </div>
 </template>
 
 <script>
-const rayName = 'extra-layout';
+const name = 'extra-layout';
 
 export default {
-  name: rayName,
+  name,
   props: {
     align: {
       type: String,
@@ -37,12 +37,12 @@ export default {
   },
   data() {
     return {
-      rayName,
+      name,
     };
   },
   computed: {
     classes() {
-      return [rayName, `${rayName}--align-${this.align}`];
+      return [name, `${name}--align-${this.align}`];
     },
   },
 };

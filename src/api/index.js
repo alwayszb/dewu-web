@@ -6,6 +6,7 @@ import sellSnapshotApi from './sell-snapshot';
 import scheduleJobApi from './schedule-job';
 import captureApi from './capture';
 import salesRecordApi from './sales-record';
+import autoOrderApi from './auto-order';
 
 export {
   //
@@ -17,4 +18,5 @@ export {
   scheduleJobApi,
   captureApi,
   salesRecordApi,
+  autoOrderApi,
 };

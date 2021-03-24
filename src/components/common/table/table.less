@@ -1,0 +1,99 @@
+@name: du-table;
+@table-header-color: fade(@black, 65%);
+@table-header-bg: #dcdee2;
+@table-border-radius-base: 0;
+@table-row-hover-bg: @primary-1;
+@th-padding: @padding-base 0.375rem;
+@td-padding: @padding-base / 2 @padding-base*0.75;
+
+.@{name} {
+  &-main {
+    .ant-table {
+      .ant-table-content {
+        .ant-table-header.ant-table-hide-scrollbar {
+          background: @table-header-bg;
+        }
+
+        table {
+          border-radius: @table-border-radius-base;
+
+          thead.ant-table-thead {
+            tr {
+              th {
+                color: @table-header-color;
+                border-radius: @table-border-radius-base;
+                background: @table-header-bg;
+                padding: @th-padding;
+              }
+            }
+          }
+
+          .ant-table-selection-col {
+            width: 2.25rem;
+          }
+        }
+
+        .ant-table-body,
+        .ant-table-body-outer {
+          table {
+            tbody.ant-table-tbody {
+              tr {
+                &.ant-table-row {
+                  td {
+                    padding: @td-padding;
+                    transition: none;
+                  }
+                }
+
+                &:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected),
+                &.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) {
+                  & > td {
+                    background: inherit;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &--hover-highlight {
+    .@{name}-main {
+      .ant-table > .ant-table-content {
+        .ant-table-body,
+        .ant-table-body-inner {
+          & > table > tbody.ant-table-tbody > tr {
+            &:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
+            &.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+              background: @table-row-hover-bg;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &-title,
+  &-condition {
+    position: relative;
+    padding: @padding-base 0 @padding-base @padding-base;
+
+    &::after {
+      position: absolute;
+      content: '';
+      height: 1px;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      background: #e8e8e8;
+    }
+  }
+
+  &-condition {
+    &:empty {
+      display: none;
+    }
+  }
+}
