@@ -18,7 +18,7 @@ const calcProfit = ({ sellPrice, serviceFeeRate, stockPrice }) => {
 
 const getProfitInfo = (stock) => {
   const { stockPrice, snapshotPrice, serviceFeeRate } = stock;
-  if (!stockPrice) {
+  if (!stockPrice || !snapshotPrice) {
     return {};
   }
 
