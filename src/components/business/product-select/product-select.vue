@@ -119,8 +119,8 @@ export default {
           title={this.modalTitle}
           width="60%"
           maskClosable={false}
-          okText="Confirm to Add"
-          cancelText="Close"
+          okText="CONFIRM"
+          cancelText="CLOSE"
           confirmLoading={this.confirmLoading}
           onOk={this.addRecord}
           onCancel={this.onClose}

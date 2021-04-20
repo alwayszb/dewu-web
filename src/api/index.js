@@ -7,6 +7,8 @@ import scheduleJobApi from './schedule-job';
 import captureApi from './capture';
 import salesRecordApi from './sales-record';
 import autoOrderApi from './auto-order';
+import appAccountApi from './app-account';
+import duNativeApi from './du-native';
 
 export {
   //
@@ -19,4 +21,6 @@ export {
   captureApi,
   salesRecordApi,
   autoOrderApi,
+  appAccountApi,
+  duNativeApi,
 };

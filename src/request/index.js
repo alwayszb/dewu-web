@@ -38,7 +38,7 @@ request.interceptors.response.use(
       title: '请求失败',
       description: err.message,
     });
-    Promise.reject(err);
+    return Promise.reject(err);
   },
 );
 

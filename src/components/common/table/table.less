@@ -3,7 +3,7 @@
 @table-header-bg: #dcdee2;
 @table-border-radius-base: 0;
 @table-row-hover-bg: @primary-1;
-@th-padding: @padding-base 0.375rem;
+@th-padding: @padding-base / 2;
 @td-padding: @padding-base / 2 @padding-base*0.75;
 
 .@{name} {
@@ -78,7 +78,7 @@
   &-title,
   &-condition {
     position: relative;
-    padding: @padding-base 0 @padding-base @padding-base;
+    padding: @padding-base;
 
     &::after {
       position: absolute;

@@ -152,13 +152,13 @@ export default {
   },
   render() {
     return (
-      <div>
+      <div class={name}>
         <du-table dataSource={this.dataSource} columns={this.columns} rowKey="id" full-height>
           <template slot="condition">
             <a-input-search placeholder="search" style={{ width: '14rem' }} />
             <a-button
               type="primary"
-              icon="file-add"
+              icon="plus"
               style={{ margin: '0 0.5rem' }}
               onClick={this.onAddRecord}
             >
