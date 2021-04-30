@@ -9,6 +9,7 @@ import salesRecordApi from './sales-record';
 import autoOrderApi from './auto-order';
 import appAccountApi from './app-account';
 import duNativeApi from './du-native';
+import nikeOrderApi from './nike-order';
 
 export {
   //
@@ -23,4 +24,5 @@ export {
   autoOrderApi,
   appAccountApi,
   duNativeApi,
+  nikeOrderApi,
 };

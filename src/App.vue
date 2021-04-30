@@ -45,6 +45,7 @@ export default {
       { title: 'Stock', key: 'stock', icon: 'appstore' },
       { title: 'Search', key: 'search', icon: 'search' },
       { title: 'Monitor', key: 'monitor', icon: 'monitor' },
+      { title: 'Nike', key: 'nike-config', icon: 'money-collect' },
       { title: 'Favorite', key: 'favorite', icon: 'star' },
       { title: 'Task', key: 'task', icon: 'schedule' },
       { title: 'Calendar', key: 'calendar', icon: 'calendar' },

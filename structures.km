@@ -1,0 +1,198 @@
+{
+    "root": {
+        "data": {
+            "id": "cb02jszjsa00",
+            "created": 1619685383186,
+            "text": "Modules"
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "cb02jvu7aiw0",
+                    "created": 1619685389393,
+                    "text": "Dewu"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cb02pix2jx40",
+                            "created": 1619685831453,
+                            "text": "Account"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cb02po9f3ko0",
+                            "created": 1619685843084,
+                            "text": "New Arrival"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cb02pqlpubk0",
+                            "created": 1619685848181,
+                            "text": "Auto Order"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cb02t1z8jz40",
+                                    "created": 1619686108035,
+                                    "text": "Wanna List"
+                                },
+                                "children": []
+                            },
+                            {
+                                "data": {
+                                    "id": "cb02t5w7o2o0",
+                                    "created": 1619686116560,
+                                    "text": "Order Record"
+                                },
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "cb02k93e9bc0",
+                    "created": 1619685418247,
+                    "text": "Nike"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cb02qcj2xw00",
+                            "created": 1619685895911,
+                            "text": "Account"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cb02qe8t8xk0",
+                            "created": 1619685899643,
+                            "text": "View Order"
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "cb02n5cav3s0",
+                    "created": 1619685645171,
+                    "text": "System"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cb02nbj5srk0",
+                            "created": 1619685658646,
+                            "text": "Product"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cb02tr9ngw00",
+                                    "created": 1619686163085,
+                                    "text": "Auto Crawl"
+                                },
+                                "children": []
+                            },
+                            {
+                                "data": {
+                                    "id": "cb02tul5f4o0",
+                                    "created": 1619686170310,
+                                    "text": "Manually Add"
+                                },
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": "cb02ou6gftc0",
+                            "created": 1619685777601,
+                            "text": "Calendar"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cb02p414pd40",
+                            "created": 1619685799047,
+                            "text": "Schedule"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cb02srl5qw00",
+                                    "created": 1619686085416,
+                                    "text": "Run Record"
+                                },
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": "cb02pvfeo3k0",
+                            "created": 1619685858683,
+                            "text": "Stock"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cb02rlmmfo00",
+                                    "created": 1619685994080,
+                                    "text": "In Stock"
+                                },
+                                "children": []
+                            },
+                            {
+                                "data": {
+                                    "id": "cb02rpx48sg0",
+                                    "created": 1619686003422,
+                                    "text": "Sales Record"
+                                },
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": "cb02pzc737k0",
+                            "created": 1619685867196,
+                            "text": "Favorite"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cb02ra4i49s0",
+                            "created": 1619685969040,
+                            "text": "Message Pushing"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cb02sixxy2g0",
+                                    "created": 1619686066598,
+                                    "text": "Push Record"
+                                },
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "template": "right",
+    "theme": "fresh-blue",
+    "version": "1.4.43"
+}

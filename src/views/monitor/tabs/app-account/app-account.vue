@@ -6,6 +6,12 @@ import GetCaptcha from './components/get-captcha';
 import CheckUser from './components/check-user';
 
 const name = 'app-account';
+const api = {
+  ...appAccountApi,
+  findAll: (options) => {
+    return appAccountApi.findAll({ ...options, platform: 'dewu' });
+  },
+};
 
 export default {
   name,
@@ -13,13 +19,13 @@ export default {
     this.columns = [
       { dataIndex: 'userName', title: 'UserName', width: 200 },
       {
-        dataIndex: 'token',
-        title: 'Token',
+        dataIndex: 'accessToken',
+        title: 'Access Token',
         width: 220,
         customRender: (value, record) => {
           return (
             <inline-edit
-              v-model={record.token}
+              v-model={record.accessToken}
               style={{ width: '20rem' }}
               onBlur={() => this.onUpdate(record)}
             />
@@ -64,7 +70,7 @@ export default {
             this.captchaModalVisible = true;
           }}
         />,
-        record.token && (
+        record.accessToken && (
           <a-button
             size="small"
             icon="file-search"
@@ -101,7 +107,7 @@ export default {
     },
 
     onAddClick() {
-      this.actionRecord = {};
+      this.actionRecord = { platform: 'dewu' };
       this.editModalVisible = true;
     },
 
@@ -154,11 +160,11 @@ export default {
 
     onCheckUserClick(record) {
       duNativeApi
-        .checkUser(record.token)
+        .checkUser(record.accessToken)
         .then(({ data }) => {
           this.checkedUserInfo = data.data.userInfo;
           this.checkUserModalVisible = true;
-          this.$message.success('User token is valid');
+          this.$message.success('User accessToken is valid');
         })
         .catch(() => {
           this.$message.error('Check user failed');
@@ -168,12 +174,7 @@ export default {
   render() {
     return (
       <div class={name}>
-        <data-table
-          ref="table"
-          api={appAccountApi}
-          columns={this.columns}
-          extraActions={this.extraActions}
-        >
+        <data-table ref="table" api={api} columns={this.columns} extraActions={this.extraActions}>
           <a-button slot="extra" type="primary" icon="plus" onClick={this.onAddClick}>
             ADD RECORD
           </a-button>

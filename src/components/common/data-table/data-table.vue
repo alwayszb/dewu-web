@@ -1,24 +1,25 @@
 <script>
-import { array, string, shape, func, bool, custom } from 'vue-types';
+import { array, string, shape, func, bool } from 'vue-types';
 
 const name = 'data-table';
-const actions = {
-  delete: true,
-};
 
 export default {
   name,
   props: {
     rowKey: string().def('id'),
-    api: custom((value) => {
-      const { findAll, create, update, delete: del } = value;
-      return findAll && create && update && del;
-    }),
+    api: shape({
+      findAll: func().isRequired,
+      create: func(),
+      update: func(),
+      delete: func(),
+    }).loose.isRequired,
     normalize: func(),
     transform: func(),
     columns: array().isRequired,
     renderActions: shape({
-      delete: bool().def(true),
+      delete: bool(),
+    }).def({
+      delete: true,
     }),
     extraActions: func(),
   },
@@ -36,10 +37,9 @@ export default {
     },
     combinedActions() {
       const combinedActions = {
-        ...actions,
         ...this.renderActions,
       };
-      return Object.keys(combinedActions).filter((key) => combinedActions[key]);
+      return Object.keys(combinedActions).filter((key) => combinedActions[key] && this.api[key]);
     },
     actionColumn() {
       if (this.combinedActions.length > 0) {

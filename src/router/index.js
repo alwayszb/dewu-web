@@ -10,6 +10,7 @@ import { NotFound } from '@/views/error';
 import Stock from '@/views/stock';
 import Auth from '@/views/auth';
 import Monitor from '@/views/monitor';
+import NikeConfig from '@/views/nike-config';
 
 Vue.use(VueRouter);
 
@@ -63,6 +64,11 @@ const routes = [
     path: '/monitor',
     name: 'monitor',
     component: Monitor,
+  },
+  {
+    path: '/nike-config',
+    name: 'nike-config',
+    component: NikeConfig,
   },
   {
     path: '*',
