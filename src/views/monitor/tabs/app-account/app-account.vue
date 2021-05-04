@@ -58,7 +58,7 @@ export default {
         },
       },
     ];
-    this.extraActions = (value, record) => {
+    this.extraActions = (record) => {
       return [
         <a-button
           type="primary"

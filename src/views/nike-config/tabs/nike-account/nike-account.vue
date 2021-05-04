@@ -1,5 +1,5 @@
 <script>
-import { appAccountApi } from '@/api';
+import { appAccountApi, nikeNativeApi } from '@/api';
 import { time } from '@/utils';
 import EditForm from './components/edit-form';
 
@@ -123,11 +123,97 @@ export default {
           this.confirmLoading = false;
         });
     },
+
+    onRefreshTokenClick({ id }) {
+      nikeNativeApi
+        .refreshToken(id)
+        .then((res) => {
+          this.refreshTable();
+          this.$success({
+            title: 'Refresh token success',
+            width: 600,
+            content: (
+              <pre v-highlightjs>
+                <code class="javascript">{JSON.stringify(res.data, null, 4)}</code>
+              </pre>
+            ),
+          });
+        })
+        .catch((error) => {
+          const highlightDirectives = [
+            {
+              name: 'highlightjs',
+              value: error,
+            },
+          ];
+          this.$error({
+            title: 'Refresh token failed',
+            width: 600,
+            content: (
+              <pre {...{ directives: highlightDirectives }}>
+                <code class="javascript">{JSON.stringify(error, null, 4)}</code>
+              </pre>
+            ),
+          });
+        });
+    },
+
+    onCheckUserClick({ id }) {
+      nikeNativeApi
+        .getUserInfo(id)
+        .then((res) => {
+          this.$success({
+            title: 'Get user info success',
+            width: 600,
+            content: (
+              <pre v-highlightjs>
+                <code class="javascript">{JSON.stringify(res.data, null, 4)}</code>
+              </pre>
+            ),
+          });
+        })
+        .catch((error) => {
+          this.$error({
+            title: 'Refresh token failed',
+            width: 600,
+            content: (
+              <pre v-highlightjs>
+                <code class="javascript">{JSON.stringify(error, null, 4)}</code>
+              </pre>
+            ),
+          });
+        });
+    },
+
+    getExtraActions(record) {
+      return [
+        <a-button
+          type="primary"
+          size="small"
+          icon="cloud-sync"
+          v-tooltip="Refresh Token"
+          onClick={() => this.onRefreshTokenClick(record)}
+        />,
+        record.accessToken && (
+          <a-button
+            size="small"
+            icon="file-search"
+            v-tooltip="User Info"
+            onClick={() => this.onCheckUserClick(record)}
+          />
+        ),
+      ];
+    },
   },
   render() {
     return (
       <div class={name}>
-        <data-table ref="table" api={api} columns={this.columns}>
+        <data-table
+          ref="table"
+          api={api}
+          columns={this.columns}
+          extraActions={this.getExtraActions}
+        >
           <a-button slot="extra" type="primary" icon="plus" onClick={this.onAddClick}>
             ADD RECORD
           </a-button>

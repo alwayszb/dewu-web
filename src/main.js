@@ -5,11 +5,13 @@ import Clipboard from 'v-clipboard';
 import vViewer from 'v-viewer';
 import VueLazyload from 'vue-lazyload';
 import VTooltip from 'v-tooltip';
+import VueHighlightJS from 'vue-highlightjs';
 import components from '@/components';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 
+import 'highlight.js/styles/default.css';
 import './styles/global.less';
 
 Vue.config.productionTip = false;
@@ -23,6 +25,7 @@ Vue.use(VueLazyload, {
   loading: require('./assets/images/loading.jpg'),
 });
 Vue.use(VTooltip);
+Vue.use(VueHighlightJS);
 Vue.use(components);
 
 new Vue({

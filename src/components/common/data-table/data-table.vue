@@ -49,7 +49,7 @@ export default {
             return (
               <div>
                 {this.getActionButtons(record)}
-                {this.extraActions && this.extraActions(value, record)}
+                {this.extraActions && this.extraActions(record)}
               </div>
             );
           },
