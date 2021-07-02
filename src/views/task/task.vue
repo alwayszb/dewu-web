@@ -32,6 +32,16 @@ export default {
           return value ? <a-tag color="green">Enabled</a-tag> : <a-tag>Disabled</a-tag>;
         },
       },
+      {
+        title: 'Action',
+        customRender: (value, record) => {
+          return (
+            record.enabled && (
+              <a-button type="link" icon="play-circle" onClick={() => this.onExecuteNow(record)} />
+            )
+          );
+        },
+      },
     ];
 
     return {
@@ -39,9 +49,20 @@ export default {
     };
   },
   created() {
-    scheduleJobApi.findAllScheduleJobs().then(({ data }) => {
-      this.dataSource = data;
-    });
+    this.loadTableData();
+  },
+  methods: {
+    loadTableData() {
+      scheduleJobApi.findAllScheduleJobs().then(({ data }) => {
+        this.dataSource = data;
+      });
+    },
+    onExecuteNow(record) {
+      scheduleJobApi.executeNow(record.id).then(() => {
+        this.$message.success(`${record.name} started`);
+        this.loadTableData();
+      });
+    },
   },
   render() {
     return (

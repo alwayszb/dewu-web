@@ -7,6 +7,7 @@ const resolve = (url) => {
 module.exports = {
   devServer: {
     port: 9000,
+    disableHostCheck: true,
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
